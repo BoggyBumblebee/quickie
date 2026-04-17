@@ -1,8 +1,8 @@
 # Quickie
 
 [![CI](https://github.com/BoggyBumblebee/quickie/actions/workflows/ci.yml/badge.svg)](https://github.com/BoggyBumblebee/quickie/actions/workflows/ci.yml)
-[![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=boggybumblebee_quickie&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=boggybumblebee_quickie)
-[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=boggybumblebee_quickie&metric=coverage)](https://sonarcloud.io/summary/new_code?id=boggybumblebee_quickie)
+[![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=BoggyBumblebee_quickie&metric=alert_status)](https://sonarcloud.io/project/overview?id=BoggyBumblebee_quickie)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=BoggyBumblebee_quickie&metric=coverage)](https://sonarcloud.io/project/overview?id=BoggyBumblebee_quickie)
 
 ## About The Project
 
