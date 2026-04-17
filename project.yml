@@ -7,6 +7,9 @@ settings:
   base:
     SWIFT_VERSION: 6.0
     MACOSX_DEPLOYMENT_TARGET: 14.0
+    DEVELOPMENT_TEAM: N849L4J586
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: Apple Development
 targets:
   Quickie:
     type: application

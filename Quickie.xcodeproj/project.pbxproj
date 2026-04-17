@@ -239,7 +239,17 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					0E2E3D0F79B3614ABB461526 = {
+						DevelopmentTeam = N849L4J586;
+						ProvisioningStyle = Automatic;
 						TestTargetID = AA5426EE14B9D01629DF67D5;
+					};
+					A2C97914B67CA045A2C164D1 = {
+						DevelopmentTeam = N849L4J586;
+						ProvisioningStyle = Automatic;
+					};
+					AA5426EE14B9D01629DF67D5 = {
+						DevelopmentTeam = N849L4J586;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -403,8 +413,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = N849L4J586;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -517,8 +530,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = N849L4J586;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
