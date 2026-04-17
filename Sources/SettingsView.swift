@@ -8,6 +8,7 @@ struct SettingsView: View {
     @AppStorage(HotKeySettings.modifiersKey) private var hotKeyModifiers = Int(GlobalHotKey.defaultHotKey.carbonModifiers)
     @AppStorage(HotKeySettings.registrationStatusKey) private var registrationStatus = Int(noErr)
     @State private var validationMessage: String?
+    @State private var resetButtonWidth: CGFloat = 0
 
     private var registrationErrorMessage: String? {
         guard isGlobalShortcutEnabled, registrationStatus != Int(noErr) else { return nil }
@@ -31,14 +32,33 @@ struct SettingsView: View {
                         .frame(width: 194, height: 24)
                         .accessibilityIdentifier("settings.shortcutRecorder")
 
-                    Button("Reset to Default") {
-                        validationMessage = nil
-                        hotKey.wrappedValue = .defaultHotKey
+                    VStack(alignment: .leading, spacing: 4) {
+                        Button("Reset to Default") {
+                            validationMessage = nil
+                            hotKey.wrappedValue = .defaultHotKey
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        .help("Reset the global shortcut to the default Control-Option-Command-Space.")
+                        .disabled(!isGlobalShortcutEnabled)
+                        .accessibilityIdentifier("settings.resetShortcut")
+                        .background {
+                            GeometryReader { geometry in
+                                Color.clear
+                                    .onAppear {
+                                        resetButtonWidth = geometry.size.width
+                                    }
+                                    .onChange(of: geometry.size.width) { _, newWidth in
+                                        resetButtonWidth = newWidth
+                                    }
+                            }
+                        }
+
+                        Text("Default: \(GlobalHotKey.defaultHotKey.displayName)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(width: resetButtonWidth, alignment: .leading)
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .disabled(!isGlobalShortcutEnabled)
-                    .accessibilityIdentifier("settings.resetShortcut")
 
                     Spacer()
                 }

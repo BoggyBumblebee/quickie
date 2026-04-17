@@ -4,11 +4,13 @@ import SwiftUI
 private struct AppLaunchConfiguration {
     let opensSettingsOnLaunch: Bool
     let simulatedRegistrationStatus: OSStatus?
+    let resetsShortcutToDefault: Bool
 
     static let current = AppLaunchConfiguration(arguments: ProcessInfo.processInfo.arguments)
 
     init(arguments: [String]) {
         opensSettingsOnLaunch = arguments.contains("--uitesting-show-settings")
+        resetsShortcutToDefault = arguments.contains("--uitesting-reset-shortcut-default")
 
         if let statusArgument = arguments.first(where: { $0.hasPrefix("--uitesting-registration-status=") }),
            let rawStatus = Int32(statusArgument.split(separator: "=").last ?? "") {
@@ -30,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         HotKeySettings.registerDefaults()
+        configureUITestDefaultsIfNeeded()
         configureStatusItem()
         configurePopover()
         configureGlobalHotKey()
@@ -38,6 +41,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if AppLaunchConfiguration.current.opensSettingsOnLaunch {
             showSettings()
         }
+    }
+
+    private func configureUITestDefaultsIfNeeded() {
+        guard AppLaunchConfiguration.current.resetsShortcutToDefault else { return }
+
+        let defaults = UserDefaults.standard
+        defaults.set(Int(GlobalHotKey.defaultHotKey.keyCode), forKey: HotKeySettings.keyCodeKey)
+        defaults.set(Int(GlobalHotKey.defaultHotKey.carbonModifiers), forKey: HotKeySettings.modifiersKey)
+        defaults.set(Int(noErr), forKey: HotKeySettings.registrationStatusKey)
+        defaults.synchronize()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

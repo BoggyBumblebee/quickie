@@ -9,7 +9,10 @@ final class QuickieUITests: XCTestCase {
     @MainActor
     func testSettingsWindowShowsShortcutControls() throws {
         let app = XCUIApplication()
-        app.launchArguments = ["--uitesting-show-settings"]
+        app.launchArguments = [
+            "--uitesting-show-settings",
+            "--uitesting-reset-shortcut-default"
+        ]
 
         app.launch()
 
@@ -26,6 +29,7 @@ final class QuickieUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = [
             "--uitesting-show-settings",
+            "--uitesting-reset-shortcut-default",
             "--uitesting-registration-status=\(eventHotKeyExistsErr)"
         ]
 
@@ -40,5 +44,25 @@ final class QuickieUITests: XCTestCase {
 
         XCTAssertTrue(warningText.waitForExistence(timeout: 2))
         XCTAssertTrue(warningText.label.contains("OSStatus \(eventHotKeyExistsErr)"))
+    }
+
+    @MainActor
+    func testShortcutRecorderUpdatesDisplayedShortcut() throws {
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "--uitesting-show-settings",
+            "--uitesting-reset-shortcut-default"
+        ]
+
+        app.launch()
+
+        let recorder = app.buttons["settings.shortcutRecorder"]
+        XCTAssertTrue(recorder.waitForExistence(timeout: 5))
+
+        recorder.click()
+        recorder.typeKey("n", modifierFlags: [.command, .shift])
+
+        XCTAssertTrue(recorder.waitForExistence(timeout: 2))
+        XCTAssertEqual(recorder.label, "⇧⌘N")
     }
 }

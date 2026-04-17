@@ -57,8 +57,14 @@ schemes:
       targets:
         Quickie: all
         QuickieTests: [test]
+    test:
+      targets:
+        - QuickieTests
+  QuickieUI:
+    build:
+      targets:
+        Quickie: all
         QuickieUITests: [test]
     test:
       targets:
         - QuickieUITests
-        - QuickieTests

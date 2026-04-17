@@ -29,9 +29,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A2C97914B67CA045A2C164D1"
-               BuildableName = "QuickieTests.xctest"
-               BlueprintName = "QuickieTests"
+               BlueprintIdentifier = "0E2E3D0F79B3614ABB461526"
+               BuildableName = "QuickieUITests.xctest"
+               BlueprintName = "QuickieUITests"
                ReferencedContainer = "container:Quickie.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,9 +58,9 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A2C97914B67CA045A2C164D1"
-               BuildableName = "QuickieTests.xctest"
-               BlueprintName = "QuickieTests"
+               BlueprintIdentifier = "0E2E3D0F79B3614ABB461526"
+               BuildableName = "QuickieUITests.xctest"
+               BlueprintName = "QuickieUITests"
                ReferencedContainer = "container:Quickie.xcodeproj">
             </BuildableReference>
          </TestableReference>
