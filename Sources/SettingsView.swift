@@ -395,9 +395,13 @@ private struct ShortcutRecorderView: NSViewRepresentable {
     }
 }
 
-private func ignoreRecordedHotKey(_: GlobalHotKey) {}
+private func ignoreRecordedHotKey(_: GlobalHotKey) {
+    // Default no-op until ShortcutRecorderView supplies the real callback.
+}
 
-private func ignoreValidationMessage(_: String?) {}
+private func ignoreValidationMessage(_: String?) {
+    // Default no-op until ShortcutRecorderView supplies the real callback.
+}
 
 private final class ShortcutRecorderButton: NSButton {
     var hotKey = GlobalHotKey.defaultHotKey {
