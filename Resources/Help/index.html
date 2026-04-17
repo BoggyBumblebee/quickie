@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quickie Help</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 32px;
+      max-width: 840px;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 20px 0 32px;
+    }
+    a {
+      color: #0a7a75;
+      font-weight: 600;
+    }
+    h1, h2 {
+      line-height: 1.15;
+    }
+    section {
+      margin: 32px 0;
+    }
+    li {
+      margin: 8px 0;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Quickie Help</h1>
+    <p>Quickie lives in the macOS menu bar so you can add a reminder the moment it occurs to you.</p>
+
+    <nav aria-label="Help sections">
+      <a href="#quick-start">Quick Start</a>
+      <a href="#fields">Fields</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </nav>
+
+    <section id="quick-start">
+      <h2>Quick Start</h2>
+      <ol>
+        <li>Click the Quickie icon in the menu bar.</li>
+        <li>Enter a title, due date, due time, urgency, Reminders list, and tags.</li>
+        <li>Press Return or choose Add to create the reminder.</li>
+        <li>Choose Cancel or press Escape to clear the form without adding anything.</li>
+      </ol>
+    </section>
+
+    <section id="fields">
+      <h2>Fields</h2>
+      <p><strong>Title</strong> starts as <code>New Quickie</code>. Replace it with the reminder text you want to see in Reminders.</p>
+      <p><strong>Date</strong> starts on today's local date. <strong>Time</strong> starts at the next whole hour.</p>
+      <p><strong>Urgent</strong> uses a checkbox. Turning it on creates a high-priority reminder.</p>
+      <p><strong>Organisation / List</strong> chooses the Reminders list where Quickie will save the item.</p>
+      <p><strong>Tags</strong> starts with <code>Quickie</code>. Separate multiple tags with commas or spaces. Quickie saves them as hashtags in the reminder notes.</p>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>Troubleshooting</h2>
+      <p>If lists do not appear, open System Settings, choose Privacy &amp; Security, then Reminders, and allow Quickie full access.</p>
+      <p>If Add is disabled, make sure a writable Reminders list is selected.</p>
+      <p>If tags do not appear in the native Reminders Tags field, check the reminder notes. Apple's public Reminders API does not expose the native Tags field.</p>
+      <p>If a reminder does not appear immediately, open Reminders and check that the selected list is visible and syncing.</p>
+    </section>
+  </main>
+</body>
+</html>

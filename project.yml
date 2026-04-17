@@ -1,0 +1,50 @@
+name: Quickie
+options:
+  bundleIdPrefix: com.boggybumblebee
+  deploymentTarget:
+    macOS: "14.0"
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    MACOSX_DEPLOYMENT_TARGET: 14.0
+targets:
+  Quickie:
+    type: application
+    platform: macOS
+    sources:
+      - path: .
+        excludes:
+          - Info.plist
+          - Quickie.entitlements
+      - path: ../Resources/Assets.xcassets
+        buildPhase: resources
+      - path: ../Resources/Help
+        buildPhase: resources
+      - path: ../Resources/Assets
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.boggybumblebee.quickie
+        INFOPLIST_FILE: Sources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: Sources/Quickie.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+  QuickieTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: ../Tests
+    dependencies:
+      - target: Quickie
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.boggybumblebee.quickie.tests
+schemes:
+  Quickie:
+    build:
+      targets:
+        Quickie: all
+        QuickieTests: [test]
+    test:
+      targets:
+        - QuickieTests

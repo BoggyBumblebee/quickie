@@ -1,0 +1,2 @@
+The Quickie app icon was generated once with the Codex imagegen skill and is stored as QuickieIcon.png.
+All AppIcon and StatusIcon renditions are derived from that single source image for deterministic icon resolution.
