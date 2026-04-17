@@ -12,6 +12,7 @@
 		2AC69553155ABF6AF48C3FFD /* HelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA574CD60BE780F7BC960DF /* HelpController.swift */; };
 		3BD4118F34A1732B3F3BE819 /* GlobalHotKeyRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */; };
 		5044D4D2EF8A77885768D473 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5986C9EDBB0A47E845CE69AD /* Assets.xcassets */; };
+		5AF7F4348AE7F9A599246751 /* quickie-about-dialog.png in Resources */ = {isa = PBXBuildFile; fileRef = 5182E78A2810F8BDD70C0572 /* quickie-about-dialog.png */; };
 		5CC857EEE61BC85326689A92 /* QuickieUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C95010175AA616CC2243E3 /* QuickieUITests.swift */; };
 		636DF3D0BF14248DD8A94785 /* ReminderFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86354C9E393F7BB9EE9D3A77 /* ReminderFormViewModel.swift */; };
 		63BC5905B60B964667746763 /* ReminderList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7EE933825EC301B7C2C370 /* ReminderList.swift */; };
@@ -26,6 +27,7 @@
 		BD5AC1B6E850F37F0EDC8ADE /* QuickieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECCE531FA2D913B423AFB60 /* QuickieTests.swift */; };
 		BECA209016643A0A83E99A95 /* QuickieIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 13D93C80D99B251553398C9A /* QuickieIcon.png */; };
 		C84006E3964FDAC61AE82408 /* IconSource.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5AA154ABF11806F728B266C4 /* IconSource.txt */; };
+		D69B5346D1A01553A776E4FA /* quickie-settings-window.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9AC9033F720C55704BB7D /* quickie-settings-window.png */; };
 		D96F9E50D9DF978F7EA87DB3 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABB7174C9A49F57121F51B6 /* LaunchAtLoginManager.swift */; };
 		DEE8D94AA0FE12F273C733F4 /* ReminderDraftDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3286CCA9AE13952637BAB296 /* ReminderDraftDefaults.swift */; };
 		FE9F25C792C17BD2C4D93E58 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A886D0B403F4C7868515ADE8 /* ReminderService.swift */; };
@@ -56,6 +58,8 @@
 		3286CCA9AE13952637BAB296 /* ReminderDraftDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraftDefaults.swift; sourceTree = "<group>"; };
 		39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickieApp.swift; sourceTree = "<group>"; };
 		3C711E7F83AD99F6F739C20B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		41F9AC9033F720C55704BB7D /* quickie-settings-window.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "quickie-settings-window.png"; sourceTree = "<group>"; };
+		5182E78A2810F8BDD70C0572 /* quickie-about-dialog.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "quickie-about-dialog.png"; sourceTree = "<group>"; };
 		5986C9EDBB0A47E845CE69AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5AA154ABF11806F728B266C4 /* IconSource.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = IconSource.txt; sourceTree = "<group>"; };
 		86354C9E393F7BB9EE9D3A77 /* ReminderFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderFormViewModel.swift; sourceTree = "<group>"; };
@@ -122,6 +126,8 @@
 			isa = PBXGroup;
 			children = (
 				A029F1F2495582FFB7B09F6D /* index.html */,
+				5182E78A2810F8BDD70C0572 /* quickie-about-dialog.png */,
+				41F9AC9033F720C55704BB7D /* quickie-settings-window.png */,
 			);
 			name = Help;
 			path = Resources/Help;
@@ -267,6 +273,8 @@
 				C84006E3964FDAC61AE82408 /* IconSource.txt in Resources */,
 				BECA209016643A0A83E99A95 /* QuickieIcon.png in Resources */,
 				B60D7A093A97E8353A708995 /* index.html in Resources */,
+				5AF7F4348AE7F9A599246751 /* quickie-about-dialog.png in Resources */,
+				D69B5346D1A01553A776E4FA /* quickie-settings-window.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

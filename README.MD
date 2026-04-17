@@ -105,13 +105,13 @@ Quickie also includes:
 These screenshots reflect the current app UI and may drift slightly as Quickie evolves.
 Last updated for Quickie 1.0 (1) on April 17, 2026.
 
-### Menu Bar Form
-
-![Quickie menu bar form](Docs/Screenshots/quickie-menu-bar-form.png)
-
 ### Settings Window
 
-![Quickie Settings window](Docs/Screenshots/quickie-settings-window.png)
+![Quickie Settings window](Resources/Help/quickie-settings-window.png)
+
+### About Dialog
+
+![Quickie About dialog](Resources/Help/quickie-about-dialog.png)
 
 ## Roadmap
 

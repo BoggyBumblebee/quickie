@@ -30,6 +30,25 @@
     section {
       margin: 32px 0;
     }
+    .screenshots {
+      display: grid;
+      gap: 24px;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    }
+    figure {
+      margin: 0;
+    }
+    figcaption {
+      margin-top: 8px;
+      color: color-mix(in srgb, currentColor 75%, transparent);
+      font-size: 0.95rem;
+    }
     li {
       margin: 8px 0;
     }
@@ -45,6 +64,7 @@
 
     <nav aria-label="Help sections">
       <a href="#about">About</a>
+      <a href="#screenshots">Screenshots</a>
       <a href="#quick-start">Quick Start</a>
       <a href="#fields">Fields</a>
       <a href="#settings">Settings</a>
@@ -57,6 +77,20 @@
       <p>Quickie is a macOS menu bar app for getting reminders into Apple's Reminders app before the thought disappears. Click the status item, fill in the reminder form, and save straight into a selected Reminders list without opening the full Reminders UI first.</p>
       <p>Quickie is built around a compact reminder form, a status bar presence, a right-click utility menu, help content, launch-at-login support, and a configurable global shortcut so it can be summoned from anywhere on the desktop.</p>
       <p><strong>Version</strong> Quickie 1.0 (1). This help content is aligned with that app version.</p>
+    </section>
+
+    <section id="screenshots">
+      <h2>Screenshots</h2>
+      <div class="screenshots">
+        <figure>
+          <img src="quickie-settings-window.png" alt="Quickie Settings window showing launch at login, global shortcut, and reminder defaults.">
+          <figcaption>Quickie Settings with launch-at-login, shortcut, and reminder defaults.</figcaption>
+        </figure>
+        <figure>
+          <img src="quickie-about-dialog.png" alt="Quickie About dialog showing the app icon and version 1.0 (1).">
+          <figcaption>The standard About dialog with the current app icon and version text.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="quick-start">
