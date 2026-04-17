@@ -32,6 +32,24 @@ final class ReminderFormViewModel: ObservableObject {
         !isBusy && !draft.trimmedTitle.isEmpty && selectedListID != nil
     }
 
+    var showsListPicker: Bool {
+        !lists.isEmpty
+    }
+
+    var listLoadingMessage: String? {
+        guard lists.isEmpty else { return nil }
+
+        if isBusy {
+            return "Loading your Reminders lists..."
+        }
+
+        return errorMessage
+    }
+
+    var canRetryListLoading: Bool {
+        !isBusy && lists.isEmpty && errorMessage != nil
+    }
+
     func loadListsIfNeeded() async {
         guard lists.isEmpty else { return }
         await refreshLists()
@@ -48,6 +66,8 @@ final class ReminderFormViewModel: ObservableObject {
                 selectedListID = defaultListID()
             }
         } catch {
+            lists = []
+            selectedListID = nil
             errorMessage = error.localizedDescription
         }
 

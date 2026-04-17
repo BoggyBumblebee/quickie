@@ -227,6 +227,17 @@ final class ReminderFormViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.selectedListID, "work")
     }
 
+    func testLoadListsExposesPickerStateAfterSuccess() async {
+        let service = MockReminderService()
+        let viewModel = ReminderFormViewModel(reminderService: service)
+
+        await viewModel.loadListsIfNeeded()
+
+        XCTAssertTrue(viewModel.showsListPicker)
+        XCTAssertNil(viewModel.listLoadingMessage)
+        XCTAssertFalse(viewModel.canRetryListLoading)
+    }
+
     func testResetFormSelectsRemindersListByDefault() async {
         let service = MockReminderService()
         service.lists = [
@@ -295,7 +306,11 @@ final class ReminderFormViewModelTests: XCTestCase {
 
         XCTAssertFalse(viewModel.isBusy)
         XCTAssertTrue(viewModel.lists.isEmpty)
+        XCTAssertFalse(viewModel.showsListPicker)
         XCTAssertEqual(viewModel.errorMessage, ReminderServiceError.accessDenied.localizedDescription)
+        XCTAssertEqual(viewModel.listLoadingMessage, ReminderServiceError.accessDenied.localizedDescription)
+        XCTAssertTrue(viewModel.canRetryListLoading)
+        XCTAssertNil(viewModel.selectedListID)
     }
 
     func testAddReminderSurfacesServiceErrorAndDoesNotClose() async {

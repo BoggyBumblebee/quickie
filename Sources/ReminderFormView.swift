@@ -28,13 +28,39 @@ struct ReminderFormView: View {
                 Toggle("Urgent", isOn: $viewModel.draft.urgent)
                     .toggleStyle(.checkbox)
 
-                Picker("Organisation / List", selection: Binding(
-                    get: { viewModel.selectedListID ?? "" },
-                    set: { viewModel.selectedListID = $0.isEmpty ? nil : $0 }
-                )) {
-                    ForEach(viewModel.lists) { list in
-                        Text(list.name).tag(list.id)
+                if viewModel.showsListPicker {
+                    Picker("Organisation / List", selection: Binding(
+                        get: { viewModel.selectedListID ?? "" },
+                        set: { viewModel.selectedListID = $0.isEmpty ? nil : $0 }
+                    )) {
+                        ForEach(viewModel.lists) { list in
+                            Text(list.name).tag(list.id)
+                        }
                     }
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if viewModel.isBusy {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text("Loading your Reminders lists...")
+                            }
+                        } else if let listLoadingMessage = viewModel.listLoadingMessage {
+                            Text(listLoadingMessage)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            if viewModel.canRetryListLoading {
+                                Button("Retry") {
+                                    Task {
+                                        await viewModel.refreshLists()
+                                    }
+                                }
+                                .controlSize(.small)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
                 }
 
                 TextField("Tags", text: $viewModel.draft.tagsText)
@@ -42,7 +68,7 @@ struct ReminderFormView: View {
             }
             .formStyle(.grouped)
 
-            if let errorMessage = viewModel.errorMessage {
+            if let errorMessage = viewModel.errorMessage, !viewModel.canRetryListLoading {
                 Text(errorMessage)
                     .font(.callout)
                     .foregroundStyle(.red)
