@@ -26,6 +26,7 @@
 		BD5AC1B6E850F37F0EDC8ADE /* QuickieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECCE531FA2D913B423AFB60 /* QuickieTests.swift */; };
 		BECA209016643A0A83E99A95 /* QuickieIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 13D93C80D99B251553398C9A /* QuickieIcon.png */; };
 		C84006E3964FDAC61AE82408 /* IconSource.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5AA154ABF11806F728B266C4 /* IconSource.txt */; };
+		D96F9E50D9DF978F7EA87DB3 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABB7174C9A49F57121F51B6 /* LaunchAtLoginManager.swift */; };
 		DEE8D94AA0FE12F273C733F4 /* ReminderDraftDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3286CCA9AE13952637BAB296 /* ReminderDraftDefaults.swift */; };
 		FE9F25C792C17BD2C4D93E58 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A886D0B403F4C7868515ADE8 /* ReminderService.swift */; };
 /* End PBXBuildFile section */
@@ -51,6 +52,7 @@
 		000B5CE7FA955FF242B2C10C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0D58628408E5D50D5B817D40 /* StatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusIcon.swift; sourceTree = "<group>"; };
 		13D93C80D99B251553398C9A /* QuickieIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = QuickieIcon.png; sourceTree = "<group>"; };
+		2ABB7174C9A49F57121F51B6 /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
 		3286CCA9AE13952637BAB296 /* ReminderDraftDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraftDefaults.swift; sourceTree = "<group>"; };
 		39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickieApp.swift; sourceTree = "<group>"; };
 		3C711E7F83AD99F6F739C20B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */,
 				9AA574CD60BE780F7BC960DF /* HelpController.swift */,
 				985FF88D17A4FCB8747F19FE /* HotKeyShortcut.swift */,
+				2ABB7174C9A49F57121F51B6 /* LaunchAtLoginManager.swift */,
 				39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */,
 				F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */,
 				3286CCA9AE13952637BAB296 /* ReminderDraftDefaults.swift */,
@@ -295,6 +298,7 @@
 				3BD4118F34A1732B3F3BE819 /* GlobalHotKeyRegistrar.swift in Sources */,
 				2AC69553155ABF6AF48C3FFD /* HelpController.swift in Sources */,
 				B8841277641F23C8DEE9F793 /* HotKeyShortcut.swift in Sources */,
+				D96F9E50D9DF978F7EA87DB3 /* LaunchAtLoginManager.swift in Sources */,
 				6D523F84F02D84ABE76643F2 /* QuickieApp.swift in Sources */,
 				7857A1A45D676F8285E071BA /* ReminderDraft.swift in Sources */,
 				DEE8D94AA0FE12F273C733F4 /* ReminderDraftDefaults.swift in Sources */,

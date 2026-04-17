@@ -24,6 +24,6 @@ struct AppMetadata: Equatable {
     }
 
     var aboutPanelVersionString: String {
-        "\(shortVersion) (\(build))"
+        shortVersion
     }
 }

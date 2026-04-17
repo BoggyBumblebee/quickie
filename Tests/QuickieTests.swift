@@ -62,6 +62,32 @@ final class MockWorkspace: WorkspaceOpening {
     }
 }
 
+final class MockLaunchAtLoginService: LaunchAtLoginServicing {
+    var launchAtLoginStatus: LaunchAtLoginServiceStatus = .notRegistered
+    var registerCallCount = 0
+    var unregisterCallCount = 0
+    var registerError: Error?
+    var unregisterError: Error?
+
+    func register() throws {
+        registerCallCount += 1
+        if let registerError {
+            throw registerError
+        }
+
+        launchAtLoginStatus = .enabled
+    }
+
+    func unregister() throws {
+        unregisterCallCount += 1
+        if let unregisterError {
+            throw unregisterError
+        }
+
+        launchAtLoginStatus = .notRegistered
+    }
+}
+
 final class ReminderDraftTests: XCTestCase {
     func testDefaultDraftUsesRequiredDefaults() {
         var calendar = Calendar(identifier: .gregorian)
@@ -181,6 +207,84 @@ final class ReminderDraftDefaultsTests: XCTestCase {
         XCTAssertEqual(ReminderTimeDefaultMode.nextWholeHour.displayName, "Next whole hour")
         XCTAssertEqual(ReminderTimeDefaultMode.currentTime.displayName, "Current time")
         XCTAssertEqual(ReminderTimeDefaultMode.customTime.displayName, "Custom time")
+    }
+}
+
+@MainActor
+final class LaunchAtLoginManagerTests: XCTestCase {
+    func testRegisterDefaultsEnableLaunchAtLogin() {
+        let defaults = UserDefaults(suiteName: "Quickie.LaunchAtLoginDefaultsTests")!
+        defaults.removePersistentDomain(forName: "Quickie.LaunchAtLoginDefaultsTests")
+
+        LaunchAtLoginSettings.registerDefaults(defaults)
+
+        XCTAssertTrue(LaunchAtLoginSettings.isEnabled(defaults))
+    }
+
+    func testSetEnabledRegistersServiceAndStoresPreference() {
+        let defaults = UserDefaults(suiteName: "Quickie.LaunchAtLoginEnableTests")!
+        defaults.removePersistentDomain(forName: "Quickie.LaunchAtLoginEnableTests")
+        let service = MockLaunchAtLoginService()
+        let manager = LaunchAtLoginManager(service: service, defaults: defaults)
+
+        let state = manager.setEnabled(true)
+
+        XCTAssertEqual(service.registerCallCount, 1)
+        XCTAssertTrue(state.isEnabled)
+        XCTAssertNil(state.errorMessage)
+        XCTAssertEqual(state.statusMessage, "Quickie will open automatically after you sign in.")
+        XCTAssertTrue(LaunchAtLoginSettings.isEnabled(defaults))
+    }
+
+    func testSetEnabledUnregistersServiceAndStoresPreference() {
+        let defaults = UserDefaults(suiteName: "Quickie.LaunchAtLoginDisableTests")!
+        defaults.removePersistentDomain(forName: "Quickie.LaunchAtLoginDisableTests")
+        let service = MockLaunchAtLoginService()
+        service.launchAtLoginStatus = .enabled
+        LaunchAtLoginSettings.setEnabled(true, defaults: defaults)
+        let manager = LaunchAtLoginManager(service: service, defaults: defaults)
+
+        let state = manager.setEnabled(false)
+
+        XCTAssertEqual(service.unregisterCallCount, 1)
+        XCTAssertFalse(state.isEnabled)
+        XCTAssertNil(state.statusMessage)
+        XCTAssertNil(state.errorMessage)
+        XCTAssertFalse(LaunchAtLoginSettings.isEnabled(defaults))
+    }
+
+    func testSetEnabledRevertsPreferenceAndSurfacesErrors() {
+        struct LaunchAtLoginTestError: LocalizedError {
+            var errorDescription: String? { "Registration failed." }
+        }
+
+        let defaults = UserDefaults(suiteName: "Quickie.LaunchAtLoginErrorTests")!
+        defaults.removePersistentDomain(forName: "Quickie.LaunchAtLoginErrorTests")
+        let service = MockLaunchAtLoginService()
+        service.registerError = LaunchAtLoginTestError()
+        let manager = LaunchAtLoginManager(service: service, defaults: defaults)
+
+        let state = manager.setEnabled(true)
+
+        XCTAssertEqual(service.registerCallCount, 1)
+        XCTAssertFalse(state.isEnabled)
+        XCTAssertEqual(state.errorMessage, "Quickie could not update Launch at Login. Registration failed.")
+        XCTAssertFalse(LaunchAtLoginSettings.isEnabled(defaults))
+    }
+
+    func testCurrentStateShowsApprovalMessageWhenMacOSNeedsApproval() {
+        let defaults = UserDefaults(suiteName: "Quickie.LaunchAtLoginApprovalTests")!
+        defaults.removePersistentDomain(forName: "Quickie.LaunchAtLoginApprovalTests")
+        let service = MockLaunchAtLoginService()
+        service.launchAtLoginStatus = .requiresApproval
+        LaunchAtLoginSettings.setEnabled(true, defaults: defaults)
+        let manager = LaunchAtLoginManager(service: service, defaults: defaults)
+
+        let state = manager.currentState()
+
+        XCTAssertTrue(state.isEnabled)
+        XCTAssertEqual(state.statusMessage, "macOS still needs approval to finish enabling Quickie at login. Check System Settings > General > Login Items.")
+        XCTAssertNil(state.errorMessage)
     }
 }
 
@@ -559,7 +663,7 @@ final class AppMetadataTests: XCTestCase {
         ])
 
         XCTAssertEqual(metadata.docsVersionString, "Quickie 1.2 (34)")
-        XCTAssertEqual(metadata.aboutPanelVersionString, "1.2 (34)")
+        XCTAssertEqual(metadata.aboutPanelVersionString, "1.2")
     }
 
     func testAppMetadataFallsBackToBundleNameAndDefaultVersions() {
@@ -568,7 +672,7 @@ final class AppMetadataTests: XCTestCase {
         ])
 
         XCTAssertEqual(metadata.docsVersionString, "QuickieFallback 1.0 (1)")
-        XCTAssertEqual(metadata.aboutPanelVersionString, "1.0 (1)")
+        XCTAssertEqual(metadata.aboutPanelVersionString, "1.0")
     }
 }
 

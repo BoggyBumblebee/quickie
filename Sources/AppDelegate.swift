@@ -32,16 +32,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let popover = NSPopover()
     private lazy var statusMenu = makeStatusMenu()
     private var hotKeyRegistrar: GlobalHotKeyRegistrar?
+    private let launchAtLoginManager = LaunchAtLoginManager.shared
     private var defaultsObserver: NSObjectProtocol?
     private var settingsWindow: NSWindow?
     private var needsStatusItemConfiguration = false
 
     func applicationDidFinishLaunching(_ : Notification) {
         HotKeySettings.registerDefaults()
+        LaunchAtLoginSettings.registerDefaults()
         ReminderDefaultsSettings.registerDefaults()
         configureUITestDefaultsIfNeeded()
         configurePopover()
         configureGlobalHotKey()
+        _ = launchAtLoginManager.synchronize()
         observeHotKeySettings()
         scheduleStatusItemConfiguration()
 

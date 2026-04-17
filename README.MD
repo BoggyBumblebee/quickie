@@ -8,7 +8,7 @@
 
 Quickie is a macOS menu bar app for getting reminders into Apple's Reminders app before the thought disappears. Click the status item, fill in the reminder form, and save straight into a selected Reminders list without opening the full Reminders UI first.
 
-The app is built around a compact SwiftUI form, a status bar presence, a right-click utility menu, built-in help content, configurable reminder defaults, and a global shortcut so Quickie can be summoned from anywhere on the desktop.
+The app is built around a compact SwiftUI form, a status bar presence, a right-click utility menu, built-in help content, configurable reminder defaults, launch-at-login support, and a global shortcut so Quickie can be summoned from anywhere on the desktop.
 
 ## Built With
 
@@ -93,6 +93,7 @@ Clone the repository, generate the Xcode project from `project.yml`, then build 
 
 Quickie also includes:
 
+- A Launch at Login setting so Quickie can be ready as soon as you sign in
 - A Settings window for the global shortcut and default reminder values
 - Help pages for Quick Start and troubleshooting
 - A right-click status item menu with About, Help, Settings, and Quit actions
@@ -131,7 +132,7 @@ When contributing code:
 4. Run `Scripts/coverage_report.swift` so scoped overall and changed-code unit-test coverage both stay above 80%.
 5. Use the `QuickieUI` scheme for UI automation work when the local macOS automation environment is available.
 6. Regenerate icons with `swift Scripts/generate_icons.swift` if you change the Quickie icon design.
-7. Keep README and Help content aligned when user-facing behavior changes.
+7. Keep README and Help content aligned when user-facing behavior changes, including Settings-only features like Launch at Login.
 
 ## License
 

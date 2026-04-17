@@ -6,6 +6,7 @@ struct SettingsView: View {
     private let labelColumnWidth: CGFloat = 140
     private let inputColumnWidth: CGFloat = 320
 
+    @AppStorage(LaunchAtLoginSettings.enabledKey) private var launchesAtLogin = LaunchAtLoginSettings.defaultEnabled
     @AppStorage(HotKeySettings.enabledKey) private var isGlobalShortcutEnabled = true
     @AppStorage(HotKeySettings.keyCodeKey) private var hotKeyCode = Int(GlobalHotKey.defaultHotKey.keyCode)
     @AppStorage(HotKeySettings.modifiersKey) private var hotKeyModifiers = Int(GlobalHotKey.defaultHotKey.carbonModifiers)
@@ -21,6 +22,9 @@ struct SettingsView: View {
     @AppStorage(ReminderDefaultsSettings.tagsTextKey) private var defaultTagsText = ReminderDraftDefaults.standard.tagsText
 
     @StateObject private var reminderDefaultsModel = ReminderDefaultsSettingsViewModel()
+    @State private var isSyncingLaunchAtLoginToggle = false
+    @State private var launchAtLoginStatusMessage: String?
+    @State private var launchAtLoginErrorMessage: String?
     @State private var validationMessage: String?
 
     private var registrationErrorMessage: String? {
@@ -70,6 +74,7 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                appSection
                 shortcutSection
                 reminderDefaultsSection
                 Divider()
@@ -80,7 +85,35 @@ struct SettingsView: View {
         }
         .frame(width: 560, height: 460)
         .task {
+            refreshLaunchAtLoginState()
             await reminderDefaultsModel.loadListsIfNeeded()
+        }
+        .onChange(of: launchesAtLogin) { _, newValue in
+            guard !isSyncingLaunchAtLoginToggle else { return }
+            applyLaunchAtLoginPreference(newValue)
+        }
+    }
+
+    private var appSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("App")
+                .font(.headline)
+
+            Toggle("Launch Quickie at login", isOn: $launchesAtLogin)
+
+            if let launchAtLoginStatusMessage {
+                Text(launchAtLoginStatusMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if let launchAtLoginErrorMessage {
+                Label(launchAtLoginErrorMessage, systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout)
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 
@@ -351,6 +384,30 @@ struct SettingsView: View {
             let components = Calendar.autoupdatingCurrent.dateComponents([.hour, .minute], from: newDate)
             defaultCustomHour = components.hour ?? ReminderDraftDefaults.standard.customHour
             defaultCustomMinute = components.minute ?? ReminderDraftDefaults.standard.customMinute
+        }
+    }
+
+    private func refreshLaunchAtLoginState() {
+        let state = LaunchAtLoginManager.shared.currentState()
+        launchAtLoginStatusMessage = state.statusMessage
+        launchAtLoginErrorMessage = state.errorMessage
+
+        if launchesAtLogin != state.isEnabled {
+            isSyncingLaunchAtLoginToggle = true
+            launchesAtLogin = state.isEnabled
+            isSyncingLaunchAtLoginToggle = false
+        }
+    }
+
+    private func applyLaunchAtLoginPreference(_ isEnabled: Bool) {
+        let state = LaunchAtLoginManager.shared.setEnabled(isEnabled)
+        launchAtLoginStatusMessage = state.statusMessage
+        launchAtLoginErrorMessage = state.errorMessage
+
+        if launchesAtLogin != state.isEnabled {
+            isSyncingLaunchAtLoginToggle = true
+            launchesAtLogin = state.isEnabled
+            isSyncingLaunchAtLoginToggle = false
         }
     }
 }
