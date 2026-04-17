@@ -292,3 +292,16 @@ final class HotKeyShortcutTests: XCTestCase {
         XCTAssertTrue(message.contains("OSStatus \(eventHotKeyExistsErr)"))
     }
 }
+
+final class AppMetadataTests: XCTestCase {
+    func testAppMetadataBuildsAboutAndDocsStrings() {
+        let metadata = AppMetadata(infoDictionary: [
+            "CFBundleDisplayName": "Quickie",
+            "CFBundleShortVersionString": "1.2",
+            "CFBundleVersion": "34"
+        ])
+
+        XCTAssertEqual(metadata.docsVersionString, "Quickie 1.2 (34)")
+        XCTAssertEqual(metadata.aboutPanelVersionString, "1.2 (34)")
+    }
+}

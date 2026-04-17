@@ -22,7 +22,6 @@ struct SettingsView: View {
 
     @StateObject private var reminderDefaultsModel = ReminderDefaultsSettingsViewModel()
     @State private var validationMessage: String?
-    @State private var resetButtonWidth: CGFloat = 0
 
     private var registrationErrorMessage: String? {
         guard isGlobalShortcutEnabled, registrationStatus != Int(noErr) else { return nil }
@@ -101,32 +100,22 @@ struct SettingsView: View {
                     .frame(width: 194, height: 24)
                     .accessibilityIdentifier("settings.shortcutRecorder")
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Button("Reset to Default") {
-                        validationMessage = nil
-                        hotKey.wrappedValue = .defaultHotKey
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .help("Reset the global shortcut to the default Control-Option-Command-Space.")
-                    .disabled(!isGlobalShortcutEnabled)
-                    .accessibilityIdentifier("settings.resetShortcut")
-                    .background {
-                        GeometryReader { geometry in
-                            Color.clear
-                                .onAppear {
-                                    resetButtonWidth = geometry.size.width
-                                }
-                                .onChange(of: geometry.size.width) { _, newWidth in
-                                    resetButtonWidth = newWidth
-                                }
-                        }
-                    }
-
+                Button("Reset to Default") {
+                    validationMessage = nil
+                    hotKey.wrappedValue = .defaultHotKey
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .help("Reset the global shortcut to the default Control-Option-Command-Space.")
+                .disabled(!isGlobalShortcutEnabled)
+                .accessibilityIdentifier("settings.resetShortcut")
+                .padding(.bottom, 18)
+                .overlay(alignment: .bottomLeading) {
                     Text("Default: \(GlobalHotKey.defaultHotKey.displayName)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .frame(width: resetButtonWidth, alignment: .leading)
+                        .lineLimit(1)
+                        .allowsTightening(true)
                 }
 
                 Spacer()
@@ -257,22 +246,29 @@ struct SettingsView: View {
     }
 
     private var footerSection: some View {
-        HStack {
-            Button {
-                HelpController.shared.open(.home)
-            } label: {
-                Label("Help", systemImage: "questionmark.circle")
-            }
-            .accessibilityIdentifier("settings.help")
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Button {
+                    HelpController.shared.open(.home)
+                } label: {
+                    Label("Help", systemImage: "questionmark.circle")
+                }
+                .accessibilityIdentifier("settings.help")
 
-            Spacer()
+                Spacer()
 
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                Label("Quit Quickie", systemImage: "power")
+                Button {
+                    NSApp.terminate(nil)
+                } label: {
+                    Label("Quit Quickie", systemImage: "power")
+                }
+                .accessibilityIdentifier("settings.quit")
             }
-            .accessibilityIdentifier("settings.quit")
+
+            Text(AppMetadata.current.docsVersionString)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 
@@ -395,13 +391,14 @@ private struct ShortcutRecorderView: NSViewRepresentable {
     }
 
     func updateNSView(_ button: ShortcutRecorderButton, context: Context) {
-        button.hotKey = hotKey
+        button.update(hotKey: hotKey)
     }
 }
 
 private final class ShortcutRecorderButton: NSButton {
     var hotKey = GlobalHotKey.defaultHotKey {
         didSet {
+            guard oldValue != hotKey else { return }
             updateTitle()
         }
     }
@@ -484,7 +481,14 @@ private final class ShortcutRecorderButton: NSButton {
         updateTitle()
     }
 
+    func update(hotKey: GlobalHotKey) {
+        guard self.hotKey != hotKey else { return }
+        self.hotKey = hotKey
+    }
+
     private func updateTitle() {
-        title = isRecording ? "Press shortcut..." : hotKey.displayName
+        let nextTitle = isRecording ? "Press shortcut..." : hotKey.displayName
+        guard title != nextTitle else { return }
+        title = nextTitle
     }
 }

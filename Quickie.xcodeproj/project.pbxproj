@@ -17,6 +17,7 @@
 		63BC5905B60B964667746763 /* ReminderList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7EE933825EC301B7C2C370 /* ReminderList.swift */; };
 		6D523F84F02D84ABE76643F2 /* QuickieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */; };
 		7857A1A45D676F8285E071BA /* ReminderDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */; };
+		9E1E2C8FE247702C31BAC4F7 /* AppMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8E8D10A36BFF3125B15C7E /* AppMetadata.swift */; };
 		A7A20AB566084C346A66EED0 /* ReminderFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F207E543723853E3B841D9F1 /* ReminderFormView.swift */; };
 		AF53D8547F3E50D352A0DD40 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C711E7F83AD99F6F739C20B /* SettingsView.swift */; };
 		B60D7A093A97E8353A708995 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = A029F1F2495582FFB7B09F6D /* index.html */; };
@@ -64,6 +65,7 @@
 		B2C95010175AA616CC2243E3 /* QuickieUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickieUITests.swift; sourceTree = "<group>"; };
 		C2F2240DC3E2B378F79A1CF4 /* QuickieUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuickieUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyRegistrar.swift; sourceTree = "<group>"; };
+		DF8E8D10A36BFF3125B15C7E /* AppMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetadata.swift; sourceTree = "<group>"; };
 		E5E59F00DC83E8F7BD2CD265 /* Quickie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Quickie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F207E543723853E3B841D9F1 /* ReminderFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderFormView.swift; sourceTree = "<group>"; };
 		F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraft.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				000B5CE7FA955FF242B2C10C /* AppDelegate.swift */,
+				DF8E8D10A36BFF3125B15C7E /* AppMetadata.swift */,
 				CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */,
 				9AA574CD60BE780F7BC960DF /* HelpController.swift */,
 				985FF88D17A4FCB8747F19FE /* HotKeyShortcut.swift */,
@@ -285,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24141F1DDB2F0A7EC2190D7E /* AppDelegate.swift in Sources */,
+				9E1E2C8FE247702C31BAC4F7 /* AppMetadata.swift in Sources */,
 				3BD4118F34A1732B3F3BE819 /* GlobalHotKeyRegistrar.swift in Sources */,
 				2AC69553155ABF6AF48C3FFD /* HelpController.swift in Sources */,
 				B8841277641F23C8DEE9F793 /* HotKeyShortcut.swift in Sources */,

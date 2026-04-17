@@ -5,12 +5,17 @@ private struct AppLaunchConfiguration {
     let opensSettingsOnLaunch: Bool
     let simulatedRegistrationStatus: OSStatus?
     let resetsShortcutToDefault: Bool
+    let disablesStatusItem: Bool
+    let disablesGlobalHotKey: Bool
 
     static let current = AppLaunchConfiguration(arguments: ProcessInfo.processInfo.arguments)
 
     init(arguments: [String]) {
+        let environment = ProcessInfo.processInfo.environment
         opensSettingsOnLaunch = arguments.contains("--uitesting-show-settings")
         resetsShortcutToDefault = arguments.contains("--uitesting-reset-shortcut-default")
+        disablesStatusItem = arguments.contains("--diagnostic-disable-status-item") || environment["QUICKIE_DISABLE_STATUS_ITEM"] == "1"
+        disablesGlobalHotKey = arguments.contains("--diagnostic-disable-global-hotkey") || environment["QUICKIE_DISABLE_GLOBAL_HOTKEY"] == "1"
 
         if let statusArgument = arguments.first(where: { $0.hasPrefix("--uitesting-registration-status=") }),
            let rawStatus = Int32(statusArgument.split(separator: "=").last ?? "") {
@@ -62,6 +67,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureStatusItem() {
+        guard !AppLaunchConfiguration.current.disablesStatusItem else { return }
+
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.button?.image = StatusIcon.image()
         item.button?.imagePosition = .imageOnly
@@ -168,7 +175,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAbout() {
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.orderFrontStandardAboutPanel(nil)
+        NSApp.orderFrontStandardAboutPanel(options: [
+            .applicationVersion: AppMetadata.current.aboutPanelVersionString
+        ])
     }
 
     @objc private func showSettings() {
@@ -213,6 +222,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureGlobalHotKey() {
+        guard !AppLaunchConfiguration.current.disablesGlobalHotKey else {
+            hotKeyRegistrar?.unregister()
+            HotKeySettings.setRegistrationStatus(noErr)
+            return
+        }
+
         if let simulatedStatus = AppLaunchConfiguration.current.simulatedRegistrationStatus {
             HotKeySettings.setRegistrationStatus(simulatedStatus)
             return

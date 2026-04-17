@@ -75,6 +75,9 @@ Quickie also includes:
 
 ## Screenshots
 
+These screenshots reflect the current app UI and may drift slightly as Quickie evolves.
+Last updated for Quickie 1.0 (1) on April 17, 2026.
+
 ### Menu Bar Form
 
 ![Quickie menu bar form](Docs/Screenshots/quickie-menu-bar-form.png)
