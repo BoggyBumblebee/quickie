@@ -9,6 +9,13 @@ struct QuickieApp: App {
             SettingsView()
         }
         .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings…") {
+                    appDelegate.showSettingsFromCommand()
+                }
+                .keyboardShortcut(",", modifiers: [.command])
+            }
+
             CommandGroup(replacing: .help) {
                 Button("Quickie Help") {
                     HelpController.shared.open(.home)

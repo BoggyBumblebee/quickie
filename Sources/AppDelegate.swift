@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-private struct AppLaunchConfiguration {
+struct AppLaunchConfiguration {
     let opensSettingsOnLaunch: Bool
     let simulatedRegistrationStatus: OSStatus?
     let resetsShortcutToDefault: Bool
@@ -34,18 +34,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var hotKeyRegistrar: GlobalHotKeyRegistrar?
     private var defaultsObserver: NSObjectProtocol?
     private var settingsWindow: NSWindow?
+    private var needsStatusItemConfiguration = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         HotKeySettings.registerDefaults()
         ReminderDefaultsSettings.registerDefaults()
         configureUITestDefaultsIfNeeded()
-        configureStatusItem()
         configurePopover()
         configureGlobalHotKey()
         observeHotKeySettings()
+        scheduleStatusItemConfiguration()
 
         if AppLaunchConfiguration.current.opensSettingsOnLaunch {
             showSettings()
+        }
+    }
+
+    private func scheduleStatusItemConfiguration() {
+        guard !AppLaunchConfiguration.current.disablesStatusItem else { return }
+
+        needsStatusItemConfiguration = true
+
+        if NSApp.isActive {
+            configureStatusItem()
         }
     }
 
@@ -66,9 +77,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        guard needsStatusItemConfiguration else { return }
+        configureStatusItem()
+    }
+
     private func configureStatusItem() {
         guard !AppLaunchConfiguration.current.disablesStatusItem else { return }
+        guard statusItem == nil else { return }
 
+        needsStatusItemConfiguration = false
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.button?.image = StatusIcon.image()
         item.button?.imagePosition = .imageOnly
@@ -189,6 +207,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         window.center()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc func showSettingsFromCommand() {
+        showSettings()
     }
 
     private func makeSettingsWindow() -> NSWindow {
