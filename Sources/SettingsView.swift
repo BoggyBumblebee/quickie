@@ -44,6 +44,17 @@ struct SettingsView: View {
         }
     }
 
+    private var dateOffsetDetail: String {
+        switch defaultDateOffsetDays {
+        case 0:
+            "Quickie will prefill today's date."
+        case 1:
+            "Quickie will prefill tomorrow's date."
+        default:
+            "Quickie will prefill a date \(defaultDateOffsetDays) days ahead."
+        }
+    }
+
     private var availableReminderListNames: [String] {
         let names = reminderDefaultsModel.lists.map(\.name)
         if defaultListName.isEmpty {
@@ -156,10 +167,7 @@ struct SettingsView: View {
                 Text("Date")
                     .frame(width: labelColumnWidth, alignment: .leading)
 
-                Stepper(value: $defaultDateOffsetDays, in: 0...30) {
-                    Text(dateOffsetDescription)
-                }
-                .frame(width: inputColumnWidth, alignment: .leading)
+                dateOffsetControl
             }
 
             HStack(alignment: .top) {
@@ -279,6 +287,55 @@ struct SettingsView: View {
             hotKeyModifiers = Int(newHotKey.carbonModifiers)
             registrationStatus = Int(noErr)
         }
+    }
+
+    private var dateOffsetControl: some View {
+        HStack(spacing: 12) {
+            Button {
+                defaultDateOffsetDays -= 1
+            } label: {
+                Image(systemName: "minus.circle.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(defaultDateOffsetDays > 0 ? .primary : .secondary)
+            .disabled(defaultDateOffsetDays == 0)
+            .accessibilityIdentifier("settings.defaultDate.decrement")
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(dateOffsetDescription)
+                    .font(.body)
+
+                Text(dateOffsetDetail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 12)
+
+            Button {
+                defaultDateOffsetDays += 1
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(defaultDateOffsetDays < 30 ? .primary : .secondary)
+            .disabled(defaultDateOffsetDays == 30)
+            .accessibilityIdentifier("settings.defaultDate.increment")
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(width: inputColumnWidth, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(nsColor: .textBackgroundColor))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
+        )
     }
 
     private var customTimeBinding: Binding<Date> {
