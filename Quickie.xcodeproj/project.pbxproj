@@ -10,13 +10,17 @@
 		0924EB6C8040A0C38842D5CA /* StatusIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D58628408E5D50D5B817D40 /* StatusIcon.swift */; };
 		24141F1DDB2F0A7EC2190D7E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000B5CE7FA955FF242B2C10C /* AppDelegate.swift */; };
 		2AC69553155ABF6AF48C3FFD /* HelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA574CD60BE780F7BC960DF /* HelpController.swift */; };
+		3BD4118F34A1732B3F3BE819 /* GlobalHotKeyRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */; };
 		5044D4D2EF8A77885768D473 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5986C9EDBB0A47E845CE69AD /* Assets.xcassets */; };
+		5CC857EEE61BC85326689A92 /* QuickieUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C95010175AA616CC2243E3 /* QuickieUITests.swift */; };
 		636DF3D0BF14248DD8A94785 /* ReminderFormViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86354C9E393F7BB9EE9D3A77 /* ReminderFormViewModel.swift */; };
 		63BC5905B60B964667746763 /* ReminderList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7EE933825EC301B7C2C370 /* ReminderList.swift */; };
 		6D523F84F02D84ABE76643F2 /* QuickieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */; };
 		7857A1A45D676F8285E071BA /* ReminderDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */; };
 		A7A20AB566084C346A66EED0 /* ReminderFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F207E543723853E3B841D9F1 /* ReminderFormView.swift */; };
+		AF53D8547F3E50D352A0DD40 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C711E7F83AD99F6F739C20B /* SettingsView.swift */; };
 		B60D7A093A97E8353A708995 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = A029F1F2495582FFB7B09F6D /* index.html */; };
+		B8841277641F23C8DEE9F793 /* HotKeyShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985FF88D17A4FCB8747F19FE /* HotKeyShortcut.swift */; };
 		BD5AC1B6E850F37F0EDC8ADE /* QuickieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECCE531FA2D913B423AFB60 /* QuickieTests.swift */; };
 		BECA209016643A0A83E99A95 /* QuickieIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 13D93C80D99B251553398C9A /* QuickieIcon.png */; };
 		C84006E3964FDAC61AE82408 /* IconSource.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5AA154ABF11806F728B266C4 /* IconSource.txt */; };
@@ -24,6 +28,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8ADC7F69A1DF45365C27305D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2B7FE72A6E315085D8823CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA5426EE14B9D01629DF67D5;
+			remoteInfo = Quickie;
+		};
 		B133453A28AD9DB294AE71FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D2B7FE72A6E315085D8823CF /* Project object */;
@@ -38,14 +49,19 @@
 		0D58628408E5D50D5B817D40 /* StatusIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusIcon.swift; sourceTree = "<group>"; };
 		13D93C80D99B251553398C9A /* QuickieIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = QuickieIcon.png; sourceTree = "<group>"; };
 		39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickieApp.swift; sourceTree = "<group>"; };
+		3C711E7F83AD99F6F739C20B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5986C9EDBB0A47E845CE69AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5AA154ABF11806F728B266C4 /* IconSource.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = IconSource.txt; sourceTree = "<group>"; };
 		86354C9E393F7BB9EE9D3A77 /* ReminderFormViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderFormViewModel.swift; sourceTree = "<group>"; };
 		8ECCE531FA2D913B423AFB60 /* QuickieTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickieTests.swift; sourceTree = "<group>"; };
 		8F7EE933825EC301B7C2C370 /* ReminderList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderList.swift; sourceTree = "<group>"; };
+		985FF88D17A4FCB8747F19FE /* HotKeyShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyShortcut.swift; sourceTree = "<group>"; };
 		9AA574CD60BE780F7BC960DF /* HelpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpController.swift; sourceTree = "<group>"; };
 		A029F1F2495582FFB7B09F6D /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		A886D0B403F4C7868515ADE8 /* ReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderService.swift; sourceTree = "<group>"; };
+		B2C95010175AA616CC2243E3 /* QuickieUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickieUITests.swift; sourceTree = "<group>"; };
+		C2F2240DC3E2B378F79A1CF4 /* QuickieUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuickieUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKeyRegistrar.swift; sourceTree = "<group>"; };
 		E5E59F00DC83E8F7BD2CD265 /* Quickie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Quickie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F207E543723853E3B841D9F1 /* ReminderFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderFormView.swift; sourceTree = "<group>"; };
 		F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraft.swift; sourceTree = "<group>"; };
@@ -53,11 +69,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		06307F756254B8B9EAE16C05 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				B2C95010175AA616CC2243E3 /* QuickieUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		1F33CB43D598E08554B3A086 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				E5E59F00DC83E8F7BD2CD265 /* Quickie.app */,
 				F81F34C6E9E58E564503A4DC /* QuickieTests.xctest */,
+				C2F2240DC3E2B378F79A1CF4 /* QuickieUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,6 +95,7 @@
 				62490C9C260499B0D639E47B /* Resources */,
 				A154609AA9E2820D34937BE4 /* Sources */,
 				C9062069BE600B79F3E458B0 /* Tests */,
+				06307F756254B8B9EAE16C05 /* UITests */,
 				1F33CB43D598E08554B3A086 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -105,13 +131,16 @@
 			isa = PBXGroup;
 			children = (
 				000B5CE7FA955FF242B2C10C /* AppDelegate.swift */,
+				CA51B7A743D46018F0DC0766 /* GlobalHotKeyRegistrar.swift */,
 				9AA574CD60BE780F7BC960DF /* HelpController.swift */,
+				985FF88D17A4FCB8747F19FE /* HotKeyShortcut.swift */,
 				39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */,
 				F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */,
 				F207E543723853E3B841D9F1 /* ReminderFormView.swift */,
 				86354C9E393F7BB9EE9D3A77 /* ReminderFormViewModel.swift */,
 				8F7EE933825EC301B7C2C370 /* ReminderList.swift */,
 				A886D0B403F4C7868515ADE8 /* ReminderService.swift */,
+				3C711E7F83AD99F6F739C20B /* SettingsView.swift */,
 				0D58628408E5D50D5B817D40 /* StatusIcon.swift */,
 			);
 			path = Sources;
@@ -128,6 +157,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0E2E3D0F79B3614ABB461526 /* QuickieUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD992892D8105AAFFA2AA597 /* Build configuration list for PBXNativeTarget "QuickieUITests" */;
+			buildPhases = (
+				5624150A4A776D75B38E9C1C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6440A0010FEF2871FD21CC21 /* PBXTargetDependency */,
+			);
+			name = QuickieUITests;
+			packageProductDependencies = (
+			);
+			productName = QuickieUITests;
+			productReference = C2F2240DC3E2B378F79A1CF4 /* QuickieUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		A2C97914B67CA045A2C164D1 /* QuickieTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91DE26163855D2C159A43CE6 /* Build configuration list for PBXNativeTarget "QuickieTests" */;
@@ -171,7 +218,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					0E2E3D0F79B3614ABB461526 = {
+						TestTargetID = AA5426EE14B9D01629DF67D5;
+					};
+				};
 			};
 			buildConfigurationList = D299630DE6B7A209DE9A8F31 /* Build configuration list for PBXProject "Quickie" */;
 			developmentRegion = en;
@@ -189,6 +241,7 @@
 			targets = (
 				AA5426EE14B9D01629DF67D5 /* Quickie */,
 				A2C97914B67CA045A2C164D1 /* QuickieTests */,
+				0E2E3D0F79B3614ABB461526 /* QuickieUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -208,6 +261,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5624150A4A776D75B38E9C1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CC857EEE61BC85326689A92 /* QuickieUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6DED8078F41D46CBF1CD827B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -221,13 +282,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				24141F1DDB2F0A7EC2190D7E /* AppDelegate.swift in Sources */,
+				3BD4118F34A1732B3F3BE819 /* GlobalHotKeyRegistrar.swift in Sources */,
 				2AC69553155ABF6AF48C3FFD /* HelpController.swift in Sources */,
+				B8841277641F23C8DEE9F793 /* HotKeyShortcut.swift in Sources */,
 				6D523F84F02D84ABE76643F2 /* QuickieApp.swift in Sources */,
 				7857A1A45D676F8285E071BA /* ReminderDraft.swift in Sources */,
 				A7A20AB566084C346A66EED0 /* ReminderFormView.swift in Sources */,
 				636DF3D0BF14248DD8A94785 /* ReminderFormViewModel.swift in Sources */,
 				63BC5905B60B964667746763 /* ReminderList.swift in Sources */,
 				FE9F25C792C17BD2C4D93E58 /* ReminderService.swift in Sources */,
+				AF53D8547F3E50D352A0DD40 /* SettingsView.swift in Sources */,
 				0924EB6C8040A0C38842D5CA /* StatusIcon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,6 +299,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6440A0010FEF2871FD21CC21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA5426EE14B9D01629DF67D5 /* Quickie */;
+			targetProxy = 8ADC7F69A1DF45365C27305D /* PBXContainerItemProxy */;
+		};
 		97E7ABF51D115B7D9BCFABF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA5426EE14B9D01629DF67D5 /* Quickie */;
@@ -249,7 +318,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/Quickie.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -258,6 +326,23 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.boggybumblebee.quickie;
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1F864A0FDEAE8F0A6629CD80 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boggybumblebee.quickie.uitests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = Quickie;
 			};
 			name = Release;
 		};
@@ -295,11 +380,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -320,7 +403,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
@@ -333,7 +415,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/Quickie.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -350,7 +431,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -361,6 +442,23 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Quickie.app/Contents/MacOS/Quickie";
 			};
 			name = Release;
+		};
+		B330CAC0F66EEE73794854CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boggybumblebee.quickie.uitests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = Quickie;
+			};
+			name = Debug;
 		};
 		B959309685F50D3964FE60CA /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -396,11 +494,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -414,7 +510,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
@@ -426,7 +521,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -464,6 +559,15 @@
 			buildConfigurations = (
 				56291465B1969AB25EF9306A /* Debug */,
 				B959309685F50D3964FE60CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FD992892D8105AAFFA2AA597 /* Build configuration list for PBXNativeTarget "QuickieUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B330CAC0F66EEE73794854CA /* Debug */,
+				1F864A0FDEAE8F0A6629CD80 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

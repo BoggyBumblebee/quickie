@@ -1,3 +1,4 @@
+import Carbon
 import XCTest
 @testable import Quickie
 
@@ -141,5 +142,69 @@ final class HelpURLResolverTests: XCTestCase {
 
         XCTAssertEqual(resolver.url(for: .troubleshooting)?.path, "/tmp/Quickie/index.html")
         XCTAssertEqual(resolver.url(for: .troubleshooting)?.fragment, "troubleshooting")
+    }
+}
+
+final class HotKeyShortcutTests: XCTestCase {
+    func testDefaultHotKeyIsControlOptionCommandSpace() {
+        XCTAssertEqual(GlobalHotKey.defaultHotKey.displayName, "⌃⌥⌘Space")
+        XCTAssertEqual(GlobalHotKey.defaultHotKey.keyCode, UInt32(kVK_Space))
+        XCTAssertEqual(GlobalHotKey.defaultHotKey.carbonModifiers, UInt32(cmdKey | optionKey | controlKey))
+    }
+
+    func testCustomHotKeyDisplayNameUsesStoredKeyCodeAndModifiers() {
+        let hotKey = GlobalHotKey(keyCode: UInt32(kVK_ANSI_N), carbonModifiers: UInt32(cmdKey | shiftKey))
+
+        XCTAssertEqual(hotKey.displayName, "⇧⌘N")
+    }
+
+    func testSettingsRegisterExpectedDefaults() {
+        let defaults = UserDefaults(suiteName: "Quickie.HotKeyShortcutTests")!
+        defaults.removePersistentDomain(forName: "Quickie.HotKeyShortcutTests")
+
+        HotKeySettings.registerDefaults(defaults)
+
+        XCTAssertTrue(HotKeySettings.isEnabled(defaults))
+        XCTAssertEqual(HotKeySettings.selectedHotKey(defaults), .defaultHotKey)
+        XCTAssertEqual(HotKeySettings.registrationStatus(defaults), noErr)
+    }
+
+    func testSettingsMigratesPreviousDefaultShortcut() {
+        let defaults = UserDefaults(suiteName: "Quickie.HotKeyShortcutMigrationTests")!
+        defaults.removePersistentDomain(forName: "Quickie.HotKeyShortcutMigrationTests")
+        defaults.set(HotKeyShortcut.optionCommandSpace.rawValue, forKey: HotKeySettings.shortcutKey)
+
+        HotKeySettings.registerDefaults(defaults)
+
+        XCTAssertEqual(HotKeySettings.selectedHotKey(defaults), .defaultHotKey)
+    }
+
+    func testSettingsMigratesLegacyPresetEvenWhenOldDefaultMigrationAlreadyRan() {
+        let defaults = UserDefaults(suiteName: "Quickie.HotKeyPresetMigrationTests")!
+        defaults.removePersistentDomain(forName: "Quickie.HotKeyPresetMigrationTests")
+        defaults.set(true, forKey: "GlobalHotKey.migratedDefaultToControlOptionCommandSpace")
+        defaults.set(HotKeyShortcut.optionCommandN.rawValue, forKey: HotKeySettings.shortcutKey)
+
+        HotKeySettings.registerDefaults(defaults)
+
+        XCTAssertEqual(HotKeySettings.selectedHotKey(defaults), HotKeyShortcut.optionCommandN.hotKey)
+    }
+
+    func testRegistrationStatusIsOnlyPersistedWhenChanged() {
+        let defaults = UserDefaults(suiteName: "Quickie.HotKeyRegistrationStatusTests")!
+        defaults.removePersistentDomain(forName: "Quickie.HotKeyRegistrationStatusTests")
+        HotKeySettings.registerDefaults(defaults)
+        let registrationError = OSStatus(eventHotKeyExistsErr)
+
+        HotKeySettings.setRegistrationStatus(registrationError, defaults: defaults)
+
+        XCTAssertEqual(HotKeySettings.registrationStatus(defaults), registrationError)
+    }
+
+    func testRegistrationErrorMessageIncludesSymbolAndCode() {
+        let message = HotKeyRegistrationError.message(for: OSStatus(eventHotKeyExistsErr))
+
+        XCTAssertTrue(message.contains("eventHotKeyExistsErr"))
+        XCTAssertTrue(message.contains("OSStatus \(eventHotKeyExistsErr)"))
     }
 }

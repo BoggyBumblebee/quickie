@@ -13,3 +13,4 @@ enum StatusIcon {
         return fallback
     }
 }
+

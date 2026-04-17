@@ -39,12 +39,26 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.boggybumblebee.quickie.tests
+        GENERATE_INFOPLIST_FILE: YES
+  QuickieUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: ../UITests
+    dependencies:
+      - target: Quickie
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.boggybumblebee.quickie.uitests
+        GENERATE_INFOPLIST_FILE: YES
 schemes:
   Quickie:
     build:
       targets:
         Quickie: all
         QuickieTests: [test]
+        QuickieUITests: [test]
     test:
       targets:
+        - QuickieUITests
         - QuickieTests

@@ -6,7 +6,7 @@ struct QuickieApp: App {
 
     var body: some Scene {
         Settings {
-            EmptyView()
+            SettingsView()
         }
         .commands {
             CommandGroup(replacing: .help) {

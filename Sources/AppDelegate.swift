@@ -1,15 +1,50 @@
 import AppKit
 import SwiftUI
 
+private struct AppLaunchConfiguration {
+    let opensSettingsOnLaunch: Bool
+    let simulatedRegistrationStatus: OSStatus?
+
+    static let current = AppLaunchConfiguration(arguments: ProcessInfo.processInfo.arguments)
+
+    init(arguments: [String]) {
+        opensSettingsOnLaunch = arguments.contains("--uitesting-show-settings")
+
+        if let statusArgument = arguments.first(where: { $0.hasPrefix("--uitesting-registration-status=") }),
+           let rawStatus = Int32(statusArgument.split(separator: "=").last ?? "") {
+            simulatedRegistrationStatus = OSStatus(rawStatus)
+        } else {
+            simulatedRegistrationStatus = nil
+        }
+    }
+}
+
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
     private lazy var statusMenu = makeStatusMenu()
+    private var hotKeyRegistrar: GlobalHotKeyRegistrar?
+    private var defaultsObserver: NSObjectProtocol?
+    private var settingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        HotKeySettings.registerDefaults()
         configureStatusItem()
         configurePopover()
+        configureGlobalHotKey()
+        observeHotKeySettings()
+
+        if AppLaunchConfiguration.current.opensSettingsOnLaunch {
+            showSettings()
+        }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        hotKeyRegistrar?.unregister()
+        if let defaultsObserver {
+            NotificationCenter.default.removeObserver(defaultsObserver)
+        }
     }
 
     private func configureStatusItem() {
@@ -52,6 +87,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    private func showPopoverFromHotKey() {
+        if popover.isShown {
+            NSApp.activate(ignoringOtherApps: true)
+        } else {
+            showPopover()
+        }
+    }
+
     private func showPopover() {
         guard let button = statusItem?.button else { return }
 
@@ -75,6 +118,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let aboutItem = NSMenuItem(title: "About Quickie", action: #selector(showAbout), keyEquivalent: "")
         aboutItem.target = self
         menu.addItem(aboutItem)
+
+        let settingsItem = NSMenuItem(title: "Settings…", action: #selector(showSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(.separator())
 
         let helpMenu = NSMenu(title: "Help")
 
@@ -108,6 +157,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.orderFrontStandardAboutPanel(nil)
     }
 
+    @objc private func showSettings() {
+        closePopover()
+
+        let window = settingsWindow ?? makeSettingsWindow()
+        settingsWindow = window
+
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func makeSettingsWindow() -> NSWindow {
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 460, height: 260),
+            styleMask: [.titled, .closable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "Quickie Settings"
+        window.minSize = NSSize(width: 420, height: 230)
+        window.isReleasedWhenClosed = false
+        window.contentViewController = NSHostingController(rootView: SettingsView())
+        return window
+    }
+
     @objc private func openQuickieHelp() {
         HelpController.shared.open(.home)
     }
@@ -122,5 +196,46 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func quitApplication() {
         NSApp.terminate(nil)
+    }
+
+    private func configureGlobalHotKey() {
+        if let simulatedStatus = AppLaunchConfiguration.current.simulatedRegistrationStatus {
+            HotKeySettings.setRegistrationStatus(simulatedStatus)
+            return
+        }
+
+        if hotKeyRegistrar == nil {
+            hotKeyRegistrar = GlobalHotKeyRegistrar { [weak self] in
+                self?.showPopoverFromHotKey()
+            }
+        }
+
+        guard HotKeySettings.isEnabled() else {
+            hotKeyRegistrar?.unregister()
+            HotKeySettings.setRegistrationStatus(noErr)
+            return
+        }
+
+        guard let status = hotKeyRegistrar?.register(hotKey: HotKeySettings.selectedHotKey()) else {
+            return
+        }
+
+        HotKeySettings.setRegistrationStatus(status)
+
+        if status != noErr {
+            NSLog("Quickie could not register global shortcut: \(status)")
+        }
+    }
+
+    private func observeHotKeySettings() {
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.configureGlobalHotKey()
+            }
+        }
     }
 }
