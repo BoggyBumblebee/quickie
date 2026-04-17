@@ -1,10 +1,14 @@
 # Quickie
 
+[![CI](https://github.com/BoggyBumblebee/quickie/actions/workflows/ci.yml/badge.svg)](https://github.com/BoggyBumblebee/quickie/actions/workflows/ci.yml)
+[![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=boggybumblebee_quickie&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=boggybumblebee_quickie)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=boggybumblebee_quickie&metric=coverage)](https://sonarcloud.io/summary/new_code?id=boggybumblebee_quickie)
+
 ## About The Project
 
 Quickie is a macOS menu bar app for getting reminders into Apple's Reminders app before the thought disappears. Click the status item, fill in the reminder form, and save straight into a selected Reminders list without opening the full Reminders UI first.
 
-The app is built around a compact SwiftUI form, a status bar presence, a right-click utility menu, help content, and a configurable global shortcut so Quickie can be summoned from anywhere on the desktop.
+The app is built around a compact SwiftUI form, a status bar presence, a right-click utility menu, built-in help content, configurable reminder defaults, and a global shortcut so Quickie can be summoned from anywhere on the desktop.
 
 ## Built With
 
@@ -15,7 +19,7 @@ The app is built around a compact SwiftUI form, a status bar presence, a right-c
 - XcodeGen
 - XCTest
 - GitHub Actions
-- SonarQube Cloud
+- SonarCloud
 
 ## Getting Started
 
@@ -66,6 +70,12 @@ Clone the repository, generate the Xcode project from `project.yml`, then build 
      --changed-threshold 80
    ```
 
+6. Optional: build the separate UI automation scheme when the local macOS automation environment is healthy:
+
+   ```bash
+   xcodebuild -project Quickie.xcodeproj -scheme QuickieUI -destination 'platform=macOS' build-for-testing CODE_SIGNING_ALLOWED=NO
+   ```
+
 ## Usage
 
 1. Launch Quickie.
@@ -79,13 +89,15 @@ Clone the repository, generate the Xcode project from `project.yml`, then build 
    - Tags
 4. Choose **Add** to create the reminder in Apple Reminders.
 5. Choose **Cancel** to clear the form and dismiss Quickie.
+6. If Reminders access has not been granted yet, allow it in macOS and use the in-app **Retry** button to reload your lists.
 
 Quickie also includes:
 
 - A Settings window for the global shortcut and default reminder values
 - Help pages for Quick Start and troubleshooting
 - A right-click status item menu with About, Help, Settings, and Quit actions
-- GitHub Actions CI and SonarQube Cloud analysis for build, test, and coverage reporting
+- CI coverage gating with 80% minimum overall and changed-code thresholds
+- SonarCloud analysis for quality and coverage reporting
 
 ## Screenshots
 
@@ -119,6 +131,7 @@ When contributing code:
 4. Run `Scripts/coverage_report.swift` so scoped overall and changed-code unit-test coverage both stay above 80%.
 5. Use the `QuickieUI` scheme for UI automation work when the local macOS automation environment is available.
 6. Regenerate icons with `swift Scripts/generate_icons.swift` if you change the Quickie icon design.
+7. Keep README and Help content aligned when user-facing behavior changes.
 
 ## License
 
