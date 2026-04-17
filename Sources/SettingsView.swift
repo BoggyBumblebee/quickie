@@ -3,10 +3,24 @@ import Carbon
 import SwiftUI
 
 struct SettingsView: View {
+    private let labelColumnWidth: CGFloat = 140
+    private let inputColumnWidth: CGFloat = 320
+
     @AppStorage(HotKeySettings.enabledKey) private var isGlobalShortcutEnabled = true
     @AppStorage(HotKeySettings.keyCodeKey) private var hotKeyCode = Int(GlobalHotKey.defaultHotKey.keyCode)
     @AppStorage(HotKeySettings.modifiersKey) private var hotKeyModifiers = Int(GlobalHotKey.defaultHotKey.carbonModifiers)
     @AppStorage(HotKeySettings.registrationStatusKey) private var registrationStatus = Int(noErr)
+
+    @AppStorage(ReminderDefaultsSettings.titleKey) private var defaultReminderTitle = ReminderDraftDefaults.standard.title
+    @AppStorage(ReminderDefaultsSettings.dateOffsetDaysKey) private var defaultDateOffsetDays = ReminderDraftDefaults.standard.dateOffsetDays
+    @AppStorage(ReminderDefaultsSettings.timeModeKey) private var defaultTimeMode = ReminderDraftDefaults.standard.timeMode.rawValue
+    @AppStorage(ReminderDefaultsSettings.customHourKey) private var defaultCustomHour = ReminderDraftDefaults.standard.customHour
+    @AppStorage(ReminderDefaultsSettings.customMinuteKey) private var defaultCustomMinute = ReminderDraftDefaults.standard.customMinute
+    @AppStorage(ReminderDefaultsSettings.urgentKey) private var defaultUrgent = ReminderDraftDefaults.standard.urgent
+    @AppStorage(ReminderDefaultsSettings.listNameKey) private var defaultListName = ReminderDraftDefaults.standard.listName
+    @AppStorage(ReminderDefaultsSettings.tagsTextKey) private var defaultTagsText = ReminderDraftDefaults.standard.tagsText
+
+    @StateObject private var reminderDefaultsModel = ReminderDefaultsSettingsViewModel()
     @State private var validationMessage: String?
     @State private var resetButtonWidth: CGFloat = 0
 
@@ -15,95 +29,243 @@ struct SettingsView: View {
         return HotKeyRegistrationError.message(for: OSStatus(registrationStatus))
     }
 
+    private var selectedTimeMode: ReminderTimeDefaultMode {
+        ReminderTimeDefaultMode(rawValue: defaultTimeMode) ?? .nextWholeHour
+    }
+
+    private var dateOffsetDescription: String {
+        switch defaultDateOffsetDays {
+        case 0:
+            "Today"
+        case 1:
+            "Tomorrow"
+        default:
+            "In \(defaultDateOffsetDays) days"
+        }
+    }
+
+    private var availableReminderListNames: [String] {
+        let names = reminderDefaultsModel.lists.map(\.name)
+        if defaultListName.isEmpty {
+            return names
+        }
+
+        if names.contains(where: { $0.localizedCaseInsensitiveCompare(defaultListName) == .orderedSame }) {
+            return names
+        }
+
+        return [defaultListName] + names
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Global Shortcut")
-                    .font(.headline)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                shortcutSection
+                reminderDefaultsSection
+                Divider()
+                footerSection
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(width: 560, height: 460)
+        .task {
+            await reminderDefaultsModel.loadListsIfNeeded()
+        }
+    }
 
-                Toggle("Enable shortcut", isOn: $isGlobalShortcutEnabled)
+    private var shortcutSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Global Shortcut")
+                .font(.headline)
 
-                HStack {
-                    Text("Shortcut")
-                        .frame(width: 90, alignment: .leading)
+            Toggle("Enable shortcut", isOn: $isGlobalShortcutEnabled)
 
-                    ShortcutRecorderView(hotKey: hotKey, validationMessage: $validationMessage)
-                        .disabled(!isGlobalShortcutEnabled)
-                        .frame(width: 194, height: 24)
-                        .accessibilityIdentifier("settings.shortcutRecorder")
+            HStack(alignment: .top) {
+                Text("Shortcut")
+                    .frame(width: labelColumnWidth, alignment: .leading)
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Button("Reset to Default") {
-                            validationMessage = nil
-                            hotKey.wrappedValue = .defaultHotKey
+                ShortcutRecorderView(hotKey: hotKey, validationMessage: $validationMessage)
+                    .disabled(!isGlobalShortcutEnabled)
+                    .frame(width: 194, height: 24)
+                    .accessibilityIdentifier("settings.shortcutRecorder")
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Button("Reset to Default") {
+                        validationMessage = nil
+                        hotKey.wrappedValue = .defaultHotKey
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .help("Reset the global shortcut to the default Control-Option-Command-Space.")
+                    .disabled(!isGlobalShortcutEnabled)
+                    .accessibilityIdentifier("settings.resetShortcut")
+                    .background {
+                        GeometryReader { geometry in
+                            Color.clear
+                                .onAppear {
+                                    resetButtonWidth = geometry.size.width
+                                }
+                                .onChange(of: geometry.size.width) { _, newWidth in
+                                    resetButtonWidth = newWidth
+                                }
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-                        .help("Reset the global shortcut to the default Control-Option-Command-Space.")
-                        .disabled(!isGlobalShortcutEnabled)
-                        .accessibilityIdentifier("settings.resetShortcut")
-                        .background {
-                            GeometryReader { geometry in
-                                Color.clear
-                                    .onAppear {
-                                        resetButtonWidth = geometry.size.width
-                                    }
-                                    .onChange(of: geometry.size.width) { _, newWidth in
-                                        resetButtonWidth = newWidth
-                                    }
-                            }
-                        }
-
-                        Text("Default: \(GlobalHotKey.defaultHotKey.displayName)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .frame(width: resetButtonWidth, alignment: .leading)
                     }
 
-                    Spacer()
-                }
-
-                if let validationMessage {
-                    Text(validationMessage)
+                    Text("Default: \(GlobalHotKey.defaultHotKey.displayName)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .frame(width: resetButtonWidth, alignment: .leading)
                 }
-
-                if let registrationErrorMessage {
-                    Label(
-                        registrationErrorMessage,
-                        systemImage: "exclamationmark.triangle.fill"
-                    )
-                    .font(.callout)
-                    .foregroundStyle(.orange)
-                    .accessibilityIdentifier("settings.registrationWarning")
-                }
-            }
-
-            Spacer(minLength: 0)
-
-            Divider()
-
-            HStack {
-                Button {
-                    HelpController.shared.open(.home)
-                } label: {
-                    Label("Help", systemImage: "questionmark.circle")
-                }
-                .accessibilityIdentifier("settings.help")
 
                 Spacer()
+            }
 
-                Button {
-                    NSApp.terminate(nil)
-                } label: {
-                    Label("Quit Quickie", systemImage: "power")
-                }
-                .accessibilityIdentifier("settings.quit")
+            if let validationMessage {
+                Text(validationMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let registrationErrorMessage {
+                Label(
+                    registrationErrorMessage,
+                    systemImage: "exclamationmark.triangle.fill"
+                )
+                .font(.callout)
+                .foregroundStyle(.orange)
+                .accessibilityIdentifier("settings.registrationWarning")
             }
         }
-        .padding(24)
-        .frame(width: 460, height: 220)
+    }
+
+    private var reminderDefaultsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Reminder Defaults")
+                .font(.headline)
+
+            HStack {
+                Text("Title")
+                    .frame(width: labelColumnWidth, alignment: .leading)
+
+                TextField("Title", text: $defaultReminderTitle)
+                    .frame(width: inputColumnWidth, alignment: .leading)
+            }
+
+            HStack {
+                Text("Date")
+                    .frame(width: labelColumnWidth, alignment: .leading)
+
+                Stepper(value: $defaultDateOffsetDays, in: 0...30) {
+                    Text(dateOffsetDescription)
+                }
+                .frame(width: inputColumnWidth, alignment: .leading)
+            }
+
+            HStack(alignment: .top) {
+                Text("Time")
+                    .frame(width: labelColumnWidth, alignment: .leading)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Picker("Time", selection: $defaultTimeMode) {
+                        ForEach(ReminderTimeDefaultMode.allCases) { mode in
+                            Text(mode.displayName).tag(mode.rawValue)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .frame(width: inputColumnWidth, alignment: .leading)
+
+                    if selectedTimeMode == .customTime {
+                        DatePicker(
+                            "Custom time",
+                            selection: customTimeBinding,
+                            displayedComponents: .hourAndMinute
+                        )
+                        .labelsHidden()
+                        .frame(width: inputColumnWidth, alignment: .leading)
+                    }
+
+                    Text("Current time uses the moment you open Quickie. Next whole hour rounds forward. Custom time always uses the saved clock time.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary.opacity(0.9))
+                        .frame(width: inputColumnWidth, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            HStack {
+                Text("Urgent")
+                    .frame(width: labelColumnWidth, alignment: .leading)
+
+                Toggle("Urgent by default", isOn: $defaultUrgent)
+                    .labelsHidden()
+                    .frame(width: inputColumnWidth, alignment: .leading)
+            }
+
+            HStack {
+                Text("Organisation / List")
+                    .frame(width: labelColumnWidth, alignment: .leading)
+
+                Picker("Organisation / List", selection: $defaultListName) {
+                    ForEach(availableReminderListNames, id: \.self) { listName in
+                        Text(listName).tag(listName)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: inputColumnWidth, alignment: .leading)
+                .disabled(availableReminderListNames.isEmpty)
+            }
+
+            HStack {
+                Text("Tags")
+                    .frame(width: labelColumnWidth, alignment: .leading)
+
+                TextField("Tags", text: $defaultTagsText)
+                    .frame(width: inputColumnWidth, alignment: .leading)
+            }
+
+            if let errorMessage = reminderDefaultsModel.errorMessage {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Button("Reset Reminder Defaults") {
+                let standard = ReminderDraftDefaults.standard
+                defaultReminderTitle = standard.title
+                defaultDateOffsetDays = standard.dateOffsetDays
+                defaultTimeMode = standard.timeMode.rawValue
+                defaultCustomHour = standard.customHour
+                defaultCustomMinute = standard.customMinute
+                defaultUrgent = standard.urgent
+                defaultListName = standard.listName
+                defaultTagsText = standard.tagsText
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+    }
+
+    private var footerSection: some View {
+        HStack {
+            Button {
+                HelpController.shared.open(.home)
+            } label: {
+                Label("Help", systemImage: "questionmark.circle")
+            }
+            .accessibilityIdentifier("settings.help")
+
+            Spacer()
+
+            Button {
+                NSApp.terminate(nil)
+            } label: {
+                Label("Quit Quickie", systemImage: "power")
+            }
+            .accessibilityIdentifier("settings.quit")
+        }
     }
 
     private var hotKey: Binding<GlobalHotKey> {
@@ -116,6 +278,50 @@ struct SettingsView: View {
             hotKeyCode = Int(newHotKey.keyCode)
             hotKeyModifiers = Int(newHotKey.carbonModifiers)
             registrationStatus = Int(noErr)
+        }
+    }
+
+    private var customTimeBinding: Binding<Date> {
+        Binding {
+            var calendar = Calendar.autoupdatingCurrent
+            calendar.timeZone = .autoupdatingCurrent
+            var components = DateComponents()
+            components.calendar = calendar
+            components.timeZone = calendar.timeZone
+            components.year = 2001
+            components.month = 1
+            components.day = 1
+            components.hour = defaultCustomHour
+            components.minute = defaultCustomMinute
+            return calendar.date(from: components) ?? Date()
+        } set: { newDate in
+            let components = Calendar.autoupdatingCurrent.dateComponents([.hour, .minute], from: newDate)
+            defaultCustomHour = components.hour ?? ReminderDraftDefaults.standard.customHour
+            defaultCustomMinute = components.minute ?? ReminderDraftDefaults.standard.customMinute
+        }
+    }
+}
+
+@MainActor
+private final class ReminderDefaultsSettingsViewModel: ObservableObject {
+    @Published private(set) var lists: [ReminderList] = []
+    @Published private(set) var errorMessage: String?
+
+    private let reminderService: ReminderService
+
+    init(reminderService: ReminderService = EventKitReminderService()) {
+        self.reminderService = reminderService
+    }
+
+    func loadListsIfNeeded() async {
+        guard lists.isEmpty else { return }
+
+        do {
+            try await reminderService.requestAccess()
+            lists = try reminderService.fetchLists()
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 }

@@ -13,16 +13,19 @@ final class ReminderFormViewModel: ObservableObject {
     private let reminderService: ReminderService
     private let calendar: Calendar
     private let now: () -> Date
+    private let defaults: UserDefaults
 
     init(
         reminderService: ReminderService,
         calendar: Calendar = .autoupdatingCurrent,
-        now: @escaping () -> Date = Date.init
+        now: @escaping () -> Date = Date.init,
+        defaults: UserDefaults = .standard
     ) {
         self.reminderService = reminderService
         self.calendar = calendar
         self.now = now
-        self.draft = ReminderDraft.defaultDraft(now: now(), calendar: calendar)
+        self.defaults = defaults
+        self.draft = ReminderDraft.defaultDraft(now: now(), calendar: calendar, defaults: defaults)
     }
 
     var canAdd: Bool {
@@ -75,13 +78,16 @@ final class ReminderFormViewModel: ObservableObject {
     }
 
     func resetForm() {
-        draft = ReminderDraft.defaultDraft(now: now(), calendar: calendar)
+        draft = ReminderDraft.defaultDraft(now: now(), calendar: calendar, defaults: defaults)
         selectedListID = defaultListID()
         errorMessage = nil
     }
 
     private func defaultListID() -> String? {
-        lists.first { $0.name.localizedCaseInsensitiveCompare("Reminders") == .orderedSame }?.id
+        let preferredListName = ReminderDefaultsSettings.current(defaults).listName
+
+        return lists.first { $0.name.localizedCaseInsensitiveCompare(preferredListName) == .orderedSame }?.id
+            ?? lists.first { $0.name.localizedCaseInsensitiveCompare(ReminderDraftDefaults.standard.listName) == .orderedSame }?.id
             ?? lists.first?.id
     }
 }

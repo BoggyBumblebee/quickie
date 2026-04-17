@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         HotKeySettings.registerDefaults()
+        ReminderDefaultsSettings.registerDefaults()
         configureUITestDefaultsIfNeeded()
         configureStatusItem()
         configurePopover()
@@ -183,13 +184,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func makeSettingsWindow() -> NSWindow {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 460, height: 260),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 500),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
         )
         window.title = "Quickie Settings"
-        window.minSize = NSSize(width: 420, height: 230)
+        window.minSize = NSSize(width: 540, height: 420)
         window.isReleasedWhenClosed = false
         window.contentViewController = NSHostingController(rootView: SettingsView())
         return window

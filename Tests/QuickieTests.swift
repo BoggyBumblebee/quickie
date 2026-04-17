@@ -40,6 +40,46 @@ final class ReminderDraftTests: XCTestCase {
         XCTAssertEqual(draft.tags, ["Quickie"])
     }
 
+    func testDefaultDraftUsesSavedSettingsDefaults() {
+        let defaults = UserDefaults(suiteName: "Quickie.ReminderDraftDefaultsTests")!
+        defaults.removePersistentDomain(forName: "Quickie.ReminderDraftDefaultsTests")
+        defaults.set("Inbox Zero", forKey: ReminderDefaultsSettings.titleKey)
+        defaults.set(2, forKey: ReminderDefaultsSettings.dateOffsetDaysKey)
+        defaults.set(ReminderTimeDefaultMode.customTime.rawValue, forKey: ReminderDefaultsSettings.timeModeKey)
+        defaults.set(14, forKey: ReminderDefaultsSettings.customHourKey)
+        defaults.set(45, forKey: ReminderDefaultsSettings.customMinuteKey)
+        defaults.set(true, forKey: ReminderDefaultsSettings.urgentKey)
+        defaults.set("Quickie Work", forKey: ReminderDefaultsSettings.tagsTextKey)
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let now = DateComponents(calendar: calendar, year: 2026, month: 4, day: 16, hour: 10, minute: 37).date!
+
+        let draft = ReminderDraft.defaultDraft(now: now, calendar: calendar, defaults: defaults)
+
+        XCTAssertEqual(draft.title, "Inbox Zero")
+        XCTAssertEqual(calendar.component(.day, from: draft.date), 18)
+        XCTAssertEqual(calendar.component(.hour, from: draft.time), 14)
+        XCTAssertEqual(calendar.component(.minute, from: draft.time), 45)
+        XCTAssertTrue(draft.urgent)
+        XCTAssertEqual(draft.tags, ["Quickie", "Work"])
+    }
+
+    func testDefaultDraftCanUseCurrentTimeMode() {
+        let defaults = UserDefaults(suiteName: "Quickie.ReminderDraftCurrentTimeTests")!
+        defaults.removePersistentDomain(forName: "Quickie.ReminderDraftCurrentTimeTests")
+        defaults.set(ReminderTimeDefaultMode.currentTime.rawValue, forKey: ReminderDefaultsSettings.timeModeKey)
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let now = DateComponents(calendar: calendar, year: 2026, month: 4, day: 16, hour: 10, minute: 37).date!
+
+        let draft = ReminderDraft.defaultDraft(now: now, calendar: calendar, defaults: defaults)
+
+        XCTAssertEqual(calendar.component(.hour, from: draft.time), 10)
+        XCTAssertEqual(calendar.component(.minute, from: draft.time), 37)
+    }
+
     func testDueDateComponentsCombineDateAndTimeFields() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
@@ -89,6 +129,22 @@ final class ReminderFormViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.selectedListID, "personal")
     }
 
+    func testLoadListsUsesConfiguredDefaultListWhenAvailable() async {
+        let service = MockReminderService()
+        service.lists = [
+            ReminderList(id: "personal", name: "Personal"),
+            ReminderList(id: "work", name: "Work")
+        ]
+        let defaults = UserDefaults(suiteName: "Quickie.DefaultListPreferenceTests")!
+        defaults.removePersistentDomain(forName: "Quickie.DefaultListPreferenceTests")
+        defaults.set("Work", forKey: ReminderDefaultsSettings.listNameKey)
+        let viewModel = ReminderFormViewModel(reminderService: service, defaults: defaults)
+
+        await viewModel.loadListsIfNeeded()
+
+        XCTAssertEqual(viewModel.selectedListID, "work")
+    }
+
     func testResetFormSelectsRemindersListByDefault() async {
         let service = MockReminderService()
         service.lists = [
@@ -103,6 +159,34 @@ final class ReminderFormViewModelTests: XCTestCase {
         viewModel.resetForm()
 
         XCTAssertEqual(viewModel.selectedListID, "reminders")
+    }
+
+    func testResetFormUsesConfiguredFieldDefaults() async {
+        let service = MockReminderService()
+        service.lists = [
+            ReminderList(id: "personal", name: "Personal"),
+            ReminderList(id: "work", name: "Work")
+        ]
+        let defaults = UserDefaults(suiteName: "Quickie.ResetDefaultsTests")!
+        defaults.removePersistentDomain(forName: "Quickie.ResetDefaultsTests")
+        defaults.set("Follow Up", forKey: ReminderDefaultsSettings.titleKey)
+        defaults.set(true, forKey: ReminderDefaultsSettings.urgentKey)
+        defaults.set("Quickie Waiting", forKey: ReminderDefaultsSettings.tagsTextKey)
+        defaults.set("Work", forKey: ReminderDefaultsSettings.listNameKey)
+
+        let viewModel = ReminderFormViewModel(reminderService: service, defaults: defaults)
+
+        await viewModel.loadListsIfNeeded()
+        viewModel.draft.title = "Temporary"
+        viewModel.draft.urgent = false
+        viewModel.draft.tagsText = "Scratch"
+        viewModel.selectedListID = "personal"
+        viewModel.resetForm()
+
+        XCTAssertEqual(viewModel.draft.title, "Follow Up")
+        XCTAssertTrue(viewModel.draft.urgent)
+        XCTAssertEqual(viewModel.draft.tagsText, "Quickie Waiting")
+        XCTAssertEqual(viewModel.selectedListID, "work")
     }
 
     func testAddUsesSelectedListAndCloses() async {

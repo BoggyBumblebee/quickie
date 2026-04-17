@@ -20,15 +20,12 @@ struct ReminderDraft: Equatable {
         Self.parseTags(tagsText)
     }
 
-    static func defaultDraft(now: Date = Date(), calendar: Calendar = .autoupdatingCurrent) -> ReminderDraft {
-        ReminderDraft(
-            title: defaultTitle,
-            date: now,
-            time: nextWholeHour(after: now, calendar: calendar),
-            urgent: false,
-            listID: nil,
-            tagsText: defaultTag
-        )
+    static func defaultDraft(
+        now: Date = Date(),
+        calendar: Calendar = .autoupdatingCurrent,
+        defaults: UserDefaults = .standard
+    ) -> ReminderDraft {
+        ReminderDefaultsSettings.current(defaults).makeDraft(now: now, calendar: calendar)
     }
 
     static func nextWholeHour(after date: Date, calendar: Calendar = .autoupdatingCurrent) -> Date {
