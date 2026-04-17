@@ -14,6 +14,8 @@ The app is built around a compact SwiftUI form, a status bar presence, a right-c
 - EventKit
 - XcodeGen
 - XCTest
+- GitHub Actions
+- SonarQube Cloud
 
 ## Getting Started
 
@@ -53,6 +55,17 @@ Clone the repository, generate the Xcode project from `project.yml`, then build 
    open Quickie.xcodeproj
    ```
 
+5. Run the scoped coverage gate used by CI:
+
+   ```bash
+   swift Scripts/coverage_report.swift \
+     --xcresult TestResults.xcresult \
+     --repo-root "$PWD" \
+     --exclusions-file Scripts/coverage-exclusions.txt \
+     --overall-threshold 80 \
+     --changed-threshold 80
+   ```
+
 ## Usage
 
 1. Launch Quickie.
@@ -72,6 +85,7 @@ Quickie also includes:
 - A Settings window for the global shortcut and default reminder values
 - Help pages for Quick Start and troubleshooting
 - A right-click status item menu with About, Help, Settings, and Quit actions
+- GitHub Actions CI and SonarQube Cloud analysis for build, test, and coverage reporting
 
 ## Screenshots
 
@@ -88,10 +102,10 @@ Last updated for Quickie 1.0 (1) on April 17, 2026.
 
 ## Roadmap
 
-- [ ] Add GitHub Actions
-- [ ] Add sonarcloud.io integration
-- [ ] Update to a simpler icon, and a monochrome one for the macOS Menu Bar
-- [ ] Add Unit Tests
+- [x] Add GitHub Actions
+- [x] Add sonarcloud.io integration
+- [x] Update to a simpler icon, and a monochrome one for the macOS Menu Bar
+- [x] Add Unit Tests
 
 ## Contributing
 
@@ -102,7 +116,9 @@ When contributing code:
 1. Keep `project.yml` as the source of truth for project structure.
 2. Regenerate `Quickie.xcodeproj` with XcodeGen after project configuration changes.
 3. Run the `Quickie` scheme tests before opening a pull request.
-4. Use the `QuickieUI` scheme for UI automation work when the local macOS automation environment is available.
+4. Run `Scripts/coverage_report.swift` so scoped overall and changed-code unit-test coverage both stay above 80%.
+5. Use the `QuickieUI` scheme for UI automation work when the local macOS automation environment is available.
+6. Regenerate icons with `swift Scripts/generate_icons.swift` if you change the Quickie icon design.
 
 ## License
 

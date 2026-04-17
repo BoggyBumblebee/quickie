@@ -17,6 +17,7 @@
 		63BC5905B60B964667746763 /* ReminderList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7EE933825EC301B7C2C370 /* ReminderList.swift */; };
 		6D523F84F02D84ABE76643F2 /* QuickieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C9CB8106FEFF47CBA74056 /* QuickieApp.swift */; };
 		7857A1A45D676F8285E071BA /* ReminderDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */; };
+		9ABB286A6A405EBFBF56A85F /* ReminderServiceSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF4F72B949800F7DAEBF06B /* ReminderServiceSupport.swift */; };
 		9E1E2C8FE247702C31BAC4F7 /* AppMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8E8D10A36BFF3125B15C7E /* AppMetadata.swift */; };
 		A7A20AB566084C346A66EED0 /* ReminderFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F207E543723853E3B841D9F1 /* ReminderFormView.swift */; };
 		AF53D8547F3E50D352A0DD40 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C711E7F83AD99F6F739C20B /* SettingsView.swift */; };
@@ -70,6 +71,7 @@
 		F207E543723853E3B841D9F1 /* ReminderFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderFormView.swift; sourceTree = "<group>"; };
 		F404E46F2D430F64FE57C8E3 /* ReminderDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraft.swift; sourceTree = "<group>"; };
 		F81F34C6E9E58E564503A4DC /* QuickieTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QuickieTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFF4F72B949800F7DAEBF06B /* ReminderServiceSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderServiceSupport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -146,6 +148,7 @@
 				86354C9E393F7BB9EE9D3A77 /* ReminderFormViewModel.swift */,
 				8F7EE933825EC301B7C2C370 /* ReminderList.swift */,
 				A886D0B403F4C7868515ADE8 /* ReminderService.swift */,
+				FFF4F72B949800F7DAEBF06B /* ReminderServiceSupport.swift */,
 				3C711E7F83AD99F6F739C20B /* SettingsView.swift */,
 				0D58628408E5D50D5B817D40 /* StatusIcon.swift */,
 			);
@@ -299,6 +302,7 @@
 				636DF3D0BF14248DD8A94785 /* ReminderFormViewModel.swift in Sources */,
 				63BC5905B60B964667746763 /* ReminderList.swift in Sources */,
 				FE9F25C792C17BD2C4D93E58 /* ReminderService.swift in Sources */,
+				9ABB286A6A405EBFBF56A85F /* ReminderServiceSupport.swift in Sources */,
 				AF53D8547F3E50D352A0DD40 /* SettingsView.swift in Sources */,
 				0924EB6C8040A0C38842D5CA /* StatusIcon.swift in Sources */,
 			);

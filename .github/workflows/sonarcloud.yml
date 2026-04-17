@@ -1,0 +1,55 @@
+name: SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  sonarcloud:
+    if: ${{ secrets.SONAR_TOKEN != '' }}
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate --project-root Sources --project .
+
+      - name: Run tests and produce coverage report
+        run: |
+          xcodebuild \
+            -project Quickie.xcodeproj \
+            -scheme Quickie \
+            -destination 'platform=macOS' \
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
+            test CODE_SIGNING_ALLOWED=NO
+
+          swift Scripts/coverage_report.swift \
+            --xcresult TestResults.xcresult \
+            --repo-root "$PWD" \
+            --exclusions-file Scripts/coverage-exclusions.txt \
+            --overall-threshold 80 \
+            --changed-threshold 80 \
+            --sonar-xml sonar-generic-coverage.xml
+
+      - name: Cache Sonar packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Run SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate --project-root Sources --project .
+
+      - name: Run unit tests with coverage
+        run: |
+          xcodebuild \
+            -project Quickie.xcodeproj \
+            -scheme Quickie \
+            -destination 'platform=macOS' \
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
+            test CODE_SIGNING_ALLOWED=NO
+
+      - name: Resolve diff base
+        id: diff_base
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "value=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${{ github.event.before }}" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            echo "value=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Enforce coverage thresholds
+        run: |
+          swift Scripts/coverage_report.swift \
+            --xcresult TestResults.xcresult \
+            --repo-root "$PWD" \
+            --exclusions-file Scripts/coverage-exclusions.txt \
+            --overall-threshold 80 \
+            --changed-threshold 80 \
+            --diff-base "${{ steps.diff_base.outputs.value }}" \
+            --sonar-xml sonar-generic-coverage.xml
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quickie-coverage
+          path: |
+            TestResults.xcresult
+            sonar-generic-coverage.xml

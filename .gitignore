@@ -1,2 +1,4 @@
 *.xcuserstate
 *.xcworkspace/xcuserdata/
+TestResults.xcresult
+sonar-generic-coverage.xml

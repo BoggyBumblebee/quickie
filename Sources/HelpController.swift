@@ -1,6 +1,13 @@
 import AppKit
 import Foundation
 
+protocol WorkspaceOpening {
+    @discardableResult
+    func open(_ url: URL) -> Bool
+}
+
+extension NSWorkspace: WorkspaceOpening {}
+
 enum HelpSection {
     case home
     case quickStart
@@ -51,9 +58,9 @@ final class HelpController {
     static let shared = HelpController()
 
     private let resolver: HelpURLResolver
-    private let workspace: NSWorkspace
+    private let workspace: WorkspaceOpening
 
-    init(resolver: HelpURLResolver = HelpURLResolver(), workspace: NSWorkspace = .shared) {
+    init(resolver: HelpURLResolver = HelpURLResolver(), workspace: WorkspaceOpening = NSWorkspace.shared) {
         self.resolver = resolver
         self.workspace = workspace
     }

@@ -1,0 +1,9 @@
+# UI and macOS integration shells that are exercised through build/UI verification
+# rather than line-level unit tests.
+Sources/AppDelegate.swift
+Sources/GlobalHotKeyRegistrar.swift
+Sources/QuickieApp.swift
+Sources/ReminderFormView.swift
+Sources/ReminderService.swift
+Sources/SettingsView.swift
+Sources/StatusIcon.swift

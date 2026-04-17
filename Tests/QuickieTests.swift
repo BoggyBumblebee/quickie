@@ -1,4 +1,5 @@
 import Carbon
+import EventKit
 import XCTest
 @testable import Quickie
 
@@ -21,6 +22,43 @@ final class MockReminderService: ReminderService {
 
     func addReminder(_ draft: ReminderDraft) throws {
         addedDrafts.append(draft)
+    }
+}
+
+@MainActor
+final class FailingReminderService: ReminderService {
+    var accessError: Error?
+    var fetchError: Error?
+    var addError: Error?
+
+    func requestAccess() async throws {
+        if let accessError {
+            throw accessError
+        }
+    }
+
+    func fetchLists() throws -> [ReminderList] {
+        if let fetchError {
+            throw fetchError
+        }
+
+        return []
+    }
+
+    func addReminder(_ draft: ReminderDraft) throws {
+        if let addError {
+            throw addError
+        }
+    }
+}
+
+final class MockWorkspace: WorkspaceOpening {
+    private(set) var openedURLs: [URL] = []
+
+    @discardableResult
+    func open(_ url: URL) -> Bool {
+        openedURLs.append(url)
+        return true
     }
 }
 
@@ -99,6 +137,50 @@ final class ReminderDraftTests: XCTestCase {
 
     func testTagParsingNormalizesWhitespaceHashesAndDuplicates() {
         XCTAssertEqual(ReminderDraft.parseTags(" Quickie, #Home quickie\nErrand "), ["Quickie", "Home", "Errand"])
+    }
+
+    func testTrimmedTitleFallsBackToDefaultForWhitespaceOnlyTitle() {
+        let draft = ReminderDraft(
+            title: "   \n",
+            date: Date(),
+            time: Date(),
+            urgent: false,
+            listID: nil,
+            tagsText: ""
+        )
+
+        XCTAssertEqual(draft.trimmedTitle, ReminderDraft.defaultTitle)
+    }
+
+    func testHashtagNotesReturnsJoinedTagsAndNilForEmptyTags() {
+        let populatedDraft = ReminderDraft(
+            title: "Test",
+            date: Date(),
+            time: Date(),
+            urgent: false,
+            listID: nil,
+            tagsText: "Quickie Home"
+        )
+        let emptyDraft = ReminderDraft(
+            title: "Test",
+            date: Date(),
+            time: Date(),
+            urgent: false,
+            listID: nil,
+            tagsText: "   "
+        )
+
+        XCTAssertEqual(populatedDraft.hashtagNotes(), "#Quickie #Home")
+        XCTAssertNil(emptyDraft.hashtagNotes())
+    }
+}
+
+final class ReminderDraftDefaultsTests: XCTestCase {
+    func testTimeModesExposeStableIdentifiersAndNames() {
+        XCTAssertEqual(ReminderTimeDefaultMode.nextWholeHour.id, ReminderTimeDefaultMode.nextWholeHour.rawValue)
+        XCTAssertEqual(ReminderTimeDefaultMode.nextWholeHour.displayName, "Next whole hour")
+        XCTAssertEqual(ReminderTimeDefaultMode.currentTime.displayName, "Current time")
+        XCTAssertEqual(ReminderTimeDefaultMode.customTime.displayName, "Custom time")
     }
 }
 
@@ -203,9 +285,75 @@ final class ReminderFormViewModelTests: XCTestCase {
         XCTAssertEqual(service.addedDrafts.first?.listID, "work")
         XCTAssertTrue(didClose)
     }
+
+    func testRefreshListsSurfacesServiceError() async {
+        let service = FailingReminderService()
+        service.accessError = ReminderServiceError.accessDenied
+        let viewModel = ReminderFormViewModel(reminderService: service)
+
+        await viewModel.refreshLists()
+
+        XCTAssertFalse(viewModel.isBusy)
+        XCTAssertTrue(viewModel.lists.isEmpty)
+        XCTAssertEqual(viewModel.errorMessage, ReminderServiceError.accessDenied.localizedDescription)
+    }
+
+    func testAddReminderSurfacesServiceErrorAndDoesNotClose() async {
+        let service = FailingReminderService()
+        service.addError = ReminderServiceError.saveFailed("Boom")
+        let viewModel = ReminderFormViewModel(reminderService: service)
+        var didClose = false
+        viewModel.onClose = { didClose = true }
+        viewModel.selectedListID = "work"
+
+        await viewModel.addReminder()
+
+        XCTAssertEqual(viewModel.errorMessage, ReminderServiceError.saveFailed("Boom").localizedDescription)
+        XCTAssertFalse(didClose)
+        XCTAssertFalse(viewModel.isBusy)
+    }
+
+    func testCancelResetsDraftAndCloses() async {
+        let service = MockReminderService()
+        let viewModel = ReminderFormViewModel(reminderService: service)
+        var didClose = false
+        viewModel.onClose = { didClose = true }
+
+        await viewModel.loadListsIfNeeded()
+        viewModel.draft.title = "Changed"
+        viewModel.selectedListID = "work"
+        viewModel.cancel()
+
+        XCTAssertEqual(viewModel.draft.title, ReminderDraft.defaultTitle)
+        XCTAssertEqual(viewModel.selectedListID, "personal")
+        XCTAssertTrue(didClose)
+    }
+
+    func testCanAddRequiresIdleStateAndSelectedList() async {
+        let service = MockReminderService()
+        let viewModel = ReminderFormViewModel(reminderService: service)
+
+        XCTAssertFalse(viewModel.canAdd)
+
+        await viewModel.loadListsIfNeeded()
+
+        XCTAssertTrue(viewModel.canAdd)
+    }
 }
 
 final class HelpURLResolverTests: XCTestCase {
+    func testHomeURLDoesNotAddFragment() {
+        let resolver = HelpURLResolver(resourceURL: { resource, extensionName, subdirectory in
+            guard resource == "index", extensionName == "html", subdirectory == "Help" else { return nil }
+            return URL(fileURLWithPath: "/tmp/Quickie/Help/index.html")
+        })
+
+        let url = resolver.url(for: .home)
+
+        XCTAssertEqual(url?.path, "/tmp/Quickie/Help/index.html")
+        XCTAssertNil(url?.fragment)
+    }
+
     func testHelpURLPrefersHelpDirectoryAndAddsAnchor() {
         let resolver = HelpURLResolver(resourceURL: { resource, extensionName, subdirectory in
             guard resource == "index", extensionName == "html", subdirectory == "Help" else { return nil }
@@ -226,6 +374,35 @@ final class HelpURLResolverTests: XCTestCase {
 
         XCTAssertEqual(resolver.url(for: .troubleshooting)?.path, "/tmp/Quickie/index.html")
         XCTAssertEqual(resolver.url(for: .troubleshooting)?.fragment, "troubleshooting")
+    }
+}
+
+@MainActor
+final class HelpControllerTests: XCTestCase {
+    func testOpenUsesWorkspaceWhenResolverReturnsURL() {
+        let workspace = MockWorkspace()
+        let controller = HelpController(
+            resolver: HelpURLResolver(resourceURL: { _, _, _ in
+                URL(fileURLWithPath: "/tmp/Quickie/Help/index.html")
+            }),
+            workspace: workspace
+        )
+
+        controller.open(.quickStart)
+
+        XCTAssertEqual(workspace.openedURLs.first?.path, "/tmp/Quickie/Help/index.html")
+    }
+
+    func testOpenDoesNothingWhenResolverReturnsNil() {
+        let workspace = MockWorkspace()
+        let controller = HelpController(
+            resolver: HelpURLResolver(resourceURL: { _, _, _ in nil }),
+            workspace: workspace
+        )
+
+        controller.open(.home)
+
+        XCTAssertTrue(workspace.openedURLs.isEmpty)
     }
 }
 
@@ -291,6 +468,71 @@ final class HotKeyShortcutTests: XCTestCase {
         XCTAssertTrue(message.contains("eventHotKeyExistsErr"))
         XCTAssertTrue(message.contains("OSStatus \(eventHotKeyExistsErr)"))
     }
+
+    func testShortcutFallbackUsesDefaultShortcut() {
+        XCTAssertEqual(HotKeyShortcut.shortcut(rawValue: "nope"), .defaultShortcut)
+    }
+
+    func testShortcutDisplayNamesCoverEachPreset() {
+        XCTAssertEqual(HotKeyShortcut.optionCommandSpace.displayName, "⌥⌘Space")
+        XCTAssertEqual(HotKeyShortcut.optionCommandN.displayName, "⌥⌘N")
+        XCTAssertEqual(HotKeyShortcut.shiftOptionCommandN.displayName, "⇧⌥⌘N")
+        XCTAssertEqual(HotKeyShortcut.controlOptionCommandN.displayName, "⌃⌥⌘N")
+    }
+
+    func testRegistrationErrorMessageCoversParameterAndUnknownFailures() {
+        XCTAssertTrue(HotKeyRegistrationError.message(for: OSStatus(paramErr)).contains("paramErr"))
+        XCTAssertTrue(HotKeyRegistrationError.message(for: -9999).contains("Unknown Carbon hot key registration failure"))
+    }
+
+    func testGlobalHotKeyRejectsModifierOnlyAndMissingModifierEvents() {
+        let modifierOnly = NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [.command],
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            characters: "",
+            charactersIgnoringModifiers: "",
+            isARepeat: false,
+            keyCode: UInt16(kVK_Command)
+        )
+        let missingModifier = NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            characters: "n",
+            charactersIgnoringModifiers: "n",
+            isARepeat: false,
+            keyCode: UInt16(kVK_ANSI_N)
+        )
+
+        XCTAssertNil(modifierOnly.flatMap { GlobalHotKey(event: $0) })
+        XCTAssertNil(missingModifier.flatMap { GlobalHotKey(event: $0) })
+    }
+
+    func testGlobalHotKeyBuildsFromCommandOptionEvent() throws {
+        let event = try XCTUnwrap(NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [.command, .option],
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            characters: "n",
+            charactersIgnoringModifiers: "n",
+            isARepeat: false,
+            keyCode: UInt16(kVK_ANSI_N)
+        ))
+
+        let hotKey = try XCTUnwrap(GlobalHotKey(event: event))
+
+        XCTAssertEqual(hotKey, HotKeyShortcut.optionCommandN.hotKey)
+    }
 }
 
 final class AppMetadataTests: XCTestCase {
@@ -303,5 +545,65 @@ final class AppMetadataTests: XCTestCase {
 
         XCTAssertEqual(metadata.docsVersionString, "Quickie 1.2 (34)")
         XCTAssertEqual(metadata.aboutPanelVersionString, "1.2 (34)")
+    }
+
+    func testAppMetadataFallsBackToBundleNameAndDefaultVersions() {
+        let metadata = AppMetadata(infoDictionary: [
+            "CFBundleName": "QuickieFallback"
+        ])
+
+        XCTAssertEqual(metadata.docsVersionString, "QuickieFallback 1.0 (1)")
+        XCTAssertEqual(metadata.aboutPanelVersionString, "1.0 (1)")
+    }
+}
+
+final class ReminderServiceSupportTests: XCTestCase {
+    func testReminderServiceErrorsExposeUserFacingDescriptions() {
+        XCTAssertEqual(ReminderServiceError.accessDenied.errorDescription, "Quickie does not have permission to use Reminders. Enable Quickie in System Settings > Privacy & Security > Reminders.")
+        XCTAssertEqual(ReminderServiceError.accessRestricted.errorDescription, "Reminders access is restricted on this Mac.")
+        XCTAssertEqual(ReminderServiceError.remindersUnavailable("Offline").errorDescription, "Quickie could not connect to Reminders. Offline")
+        XCTAssertEqual(ReminderServiceError.noWritableLists.errorDescription, "No writable Reminders lists were found.")
+        XCTAssertEqual(ReminderServiceError.missingSelectedList.errorDescription, "The selected Reminders list is no longer available.")
+        XCTAssertEqual(ReminderServiceError.saveFailed("Oops").errorDescription, "Quickie could not save the reminder. Oops")
+    }
+
+    func testAccessFailureMessageRecognizesSandboxRestrictionErrors() {
+        let error = NSError(
+            domain: NSCocoaErrorDomain,
+            code: 4099,
+            userInfo: [NSDebugDescriptionErrorKey: "Connection init failed at lookup with error 159 - Sandbox restriction."]
+        )
+
+        let message = ReminderServiceMessageFormatter.accessFailureMessage(for: error)
+
+        XCTAssertTrue(message.contains("sandbox access is blocked"))
+    }
+
+    func testAccessFailureMessageFallsBackToLocalizedDescription() {
+        let error = NSError(domain: "Example", code: 7, userInfo: [NSLocalizedDescriptionKey: "Plain failure"])
+
+        XCTAssertEqual(ReminderServiceMessageFormatter.accessFailureMessage(for: error), "Plain failure")
+    }
+
+    func testSaveFailureMessageMapsKnownEventKitErrors() {
+        let notAuthorized = NSError(domain: EKErrorDomain, code: EKError.Code.eventStoreNotAuthorized.rawValue)
+        let readOnly = NSError(domain: EKErrorDomain, code: EKError.Code.calendarReadOnly.rawValue)
+        let unsupported = NSError(domain: EKErrorDomain, code: EKError.Code.calendarDoesNotAllowReminders.rawValue)
+        let missingCalendar = NSError(domain: EKErrorDomain, code: EKError.Code.noCalendar.rawValue)
+        let invalidPriority = NSError(domain: EKErrorDomain, code: EKError.Code.priorityIsInvalid.rawValue)
+        let internalFailure = NSError(domain: EKErrorDomain, code: EKError.Code.internalFailure.rawValue)
+
+        XCTAssertTrue(ReminderServiceMessageFormatter.saveFailureMessage(for: notAuthorized).contains("not authorized"))
+        XCTAssertTrue(ReminderServiceMessageFormatter.saveFailureMessage(for: readOnly).contains("read-only"))
+        XCTAssertTrue(ReminderServiceMessageFormatter.saveFailureMessage(for: unsupported).contains("cannot accept reminders"))
+        XCTAssertTrue(ReminderServiceMessageFormatter.saveFailureMessage(for: missingCalendar).contains("no longer available"))
+        XCTAssertTrue(ReminderServiceMessageFormatter.saveFailureMessage(for: invalidPriority).contains("priority"))
+        XCTAssertTrue(ReminderServiceMessageFormatter.saveFailureMessage(for: internalFailure).contains("internal failure"))
+    }
+
+    func testSaveFailureMessageFallsBackToNSErrorDescriptionForUnknownErrors() {
+        let error = NSError(domain: "Example", code: 8, userInfo: [NSLocalizedDescriptionKey: "Other failure"])
+
+        XCTAssertEqual(ReminderServiceMessageFormatter.saveFailureMessage(for: error), "Other failure")
     }
 }
