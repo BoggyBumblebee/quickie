@@ -383,17 +383,21 @@ private struct ShortcutRecorderView: NSViewRepresentable {
     @Binding var hotKey: GlobalHotKey
     @Binding var validationMessage: String?
 
-    func makeNSView(context: Context) -> ShortcutRecorderButton {
+    func makeNSView(context _: Context) -> ShortcutRecorderButton {
         let button = ShortcutRecorderButton()
         button.onRecord = { hotKey = $0 }
         button.onValidation = { validationMessage = $0 }
         return button
     }
 
-    func updateNSView(_ button: ShortcutRecorderButton, context: Context) {
+    func updateNSView(_ button: ShortcutRecorderButton, context _: Context) {
         button.update(hotKey: hotKey)
     }
 }
+
+private func ignoreRecordedHotKey(_: GlobalHotKey) {}
+
+private func ignoreValidationMessage(_: String?) {}
 
 private final class ShortcutRecorderButton: NSButton {
     var hotKey = GlobalHotKey.defaultHotKey {
@@ -403,8 +407,8 @@ private final class ShortcutRecorderButton: NSButton {
         }
     }
 
-    var onRecord: (GlobalHotKey) -> Void = { _ in }
-    var onValidation: (String?) -> Void = { _ in }
+    var onRecord: (GlobalHotKey) -> Void = ignoreRecordedHotKey
+    var onValidation: (String?) -> Void = ignoreValidationMessage
     private var isRecording = false
 
     override init(frame frameRect: NSRect) {
@@ -419,7 +423,7 @@ private final class ShortcutRecorderButton: NSButton {
         updateTitle()
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

@@ -36,7 +36,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var settingsWindow: NSWindow?
     private var needsStatusItemConfiguration = false
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
+    func applicationDidFinishLaunching(_ : Notification) {
         HotKeySettings.registerDefaults()
         ReminderDefaultsSettings.registerDefaults()
         configureUITestDefaultsIfNeeded()
@@ -70,14 +70,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.synchronize()
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
+    func applicationWillTerminate(_ : Notification) {
         hotKeyRegistrar?.unregister()
         if let defaultsObserver {
             NotificationCenter.default.removeObserver(defaultsObserver)
         }
     }
 
-    func applicationDidBecomeActive(_ notification: Notification) {
+    func applicationDidBecomeActive(_ : Notification) {
         guard needsStatusItemConfiguration else { return }
         configureStatusItem()
     }
